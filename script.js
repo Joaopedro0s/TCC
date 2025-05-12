@@ -31,7 +31,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ============== VARIÁVEIS GLOBAIS ==============
     let currentUser = null;
-    const BASE_URL = 'http://localhost/TCC/'; // AJUSTE CHAVE: Caminho base para a pasta TCC
+    const BASE_URL = 'http://localhost/TCC/';
+    registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('regName').value;
+        const usuario = document.getElementById('regUsername').value;
+        const senha = document.getElementById('regPassword').value;
+    
+        try {
+            const response = await fetch(`${BASE_URL}registro.php`, {  // Corrigido aqui
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ nome, usuario, senha })
+            });
+            
+            const data = await response.json();
+            
+            if (data.sucesso) {
+                alert('Registro realizado com sucesso! Faça login.');
+                registerModal.style.display = 'none';
+                loginModal.style.display = 'block';
+            } else {
+                alert(data.mensagem || 'Erro no registro');
+            }
+        } catch (error) {
+            console.error("Erro no registro:", error);
+            alert('Erro ao conectar com o servidor');
+        }
+    });
 
     // ============== FUNÇÕES PRINCIPAIS ==============
 
