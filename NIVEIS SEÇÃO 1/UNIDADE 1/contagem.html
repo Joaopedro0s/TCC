@@ -1,79 +1,260 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contagem até 100</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Contagem</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fefefe;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    .progress-bar {
+      height: 20px;
+      background: #ddd;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: #58cc02;
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .question {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .hint {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      padding: 10px;
+      background: #eee;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+
+    .option-btn.correct {
+      background-color: #8bc34a;
+      color: white;
+    }
+
+    .option-btn.incorrect {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .option-btn.disabled {
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .center-message {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .btn-next {
+      padding: 12px 20px;
+      background-color: #58cc02;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .result {
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-    <div class="conteudo">
-        <h1>Contagem até 100</h1>
-        <p>Escolha a alternativa correta para cada questão.</p>
-        <div class="barra-progresso">
-            <div id="barra" class="barra"></div>
-        </div>
 
-        <!-- Questões -->
-        <div id="questao-1" class="questao">
-            <p>Quantos números existem entre 1 e 10?</p>
-            <button class="btn" onclick="verificarResposta(1, 3)">3</button>
-            <button class="btn" onclick="verificarResposta(1, 2)">10</button>
-            <button class="btn" onclick="verificarResposta(1, 1)">9</button>
-        </div>
-
-        <div id="questao-2" class="questao" style="display: none;">
-            <p>Qual é o número que vem depois de 8?</p>
-            <button class="btn" onclick="verificarResposta(2, 2)">7</button>
-            <button class="btn" onclick="verificarResposta(2, 1)">9</button>
-            <button class="btn" onclick="verificarResposta(2, 3)">10</button>
-        </div>
-
-        <div id="questao-3" class="questao" style="display: none;">
-            <p>Quantos números existem entre 10 e 20?</p>
-            <button class="btn" onclick="verificarResposta(3, 3)">9</button>
-            <button class="btn" onclick="verificarResposta(3, 1)">10</button>
-            <button class="btn" onclick="verificarResposta(3, 2)">11</button>
-        </div>
-
-        <!-- Adicionar mais questões aqui conforme necessário -->
-
+  <div class="quiz-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
+    <div class="question" id="question">Carregando...</div>
+    <div class="hint" id="hint"></div>
+    <div class="options" id="options"></div>
+    <div class="center-message" id="centerMessage" style="display:none;"></div>
+    <button class="btn-next" id="nextBtn">Próxima</button>
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
 
-    <script>
-        let progresso = 0;
+  <script>
+    const allQuestions = [
+  { q: "Quantos dedos temos em uma mão?", options: ["4", "5", "6"], answer: "5", hint: "Conte seus dedos!" },
+  { q: "Qual número vem depois do 9?", options: ["8", "10", "7"], answer: "10", hint: "Conte de 1 até 10." },
+  { q: "Qual desses números é maior?", options: ["12", "21", "15"], answer: "21", hint: "Veja qual tem mais dezenas." },
+  { q: "Qual número está entre 7 e 9?", options: ["8", "6", "10"], answer: "8", hint: "Pense na sequência: 7, ___, 9." },
+  { q: "Qual é o número 30 mais 1?", options: ["31", "13", "40"], answer: "31", hint: "Trinta e...?" },
+  { q: "Quantas pernas tem 2 gatos?", options: ["6", "8", "4"], answer: "8", hint: "Cada gato tem 4 patas." },
+  { q: "Se você tem 5 lápis e ganha mais 3, quantos tem agora?", options: ["7", "8", "9"], answer: "8", hint: "Junte 5 com 3." },
+  { q: "Qual desses números é menor?", options: ["99", "55", "100"], answer: "55", hint: "Veja qual é o mais baixo." },
+  { q: "Se você contar de 10 em 10, qual vem depois de 40?", options: ["50", "60", "45"], answer: "50", hint: "10, 20, 30, 40, ___" },
+  { q: "Você tem 10 balas e come 2. Quantas sobram?", options: ["8", "7", "10"], answer: "8", hint: "Tire 2 de 10." }
+];
+  let currentQuestion = 0;
+    let score = 0;
+    let wrongAnswers = [];
+    let reviewMode = false;
+    let reviewIndex = 0;
+    let answered = false;
 
-        function verificarResposta(questao, resposta) {
-            const respostasCorretas = [3, 1, 3]; // Respostas corretas das questões (1º questão: 3, 2º: 1, 3º: 3)
-            
-            if (resposta === respostasCorretas[questao - 1]) {
-                alert("Resposta Correta!");
-                progresso += 10;
-                atualizarBarra();
-                mostrarProximaQuestao(questao);
-            } else {
-                alert("Resposta Incorreta. Tente novamente.");
-            }
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const progressEl = document.getElementById('progress');
+    const resultEl = document.getElementById('result');
+    const centerMessageEl = document.getElementById('centerMessage');
+    const nextBtn = document.getElementById('nextBtn');
+    const hintEl = document.getElementById('hint');
+
+    function showQuestion() {
+      answered = false;
+      nextBtn.style.display = "none";
+      let q = reviewMode ? wrongAnswers[reviewIndex] : allQuestions[currentQuestion];
+      questionEl.textContent = q.q;
+      hintEl.textContent = reviewMode ? q.hint : "";
+      optionsEl.innerHTML = "";
+      centerMessageEl.style.display = "none";
+      resultEl.style.display = "none";
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.textContent = option;
+        btn.className = "option-btn";
+        btn.onclick = () => handleAnswer(btn, option);
+        optionsEl.appendChild(btn);
+      });
+
+      const progressVal = reviewMode
+        ? (reviewIndex / wrongAnswers.length) * 100
+        : (currentQuestion / allQuestions.length) * 100;
+
+      progressEl.style.width = `${progressVal}%`;
+    }
+
+    function handleAnswer(btn, selected) {
+      if (answered) return;
+      answered = true;
+
+      let q = reviewMode ? wrongAnswers[reviewIndex] : allQuestions[currentQuestion];
+      const buttons = document.querySelectorAll(".option-btn");
+
+      buttons.forEach(b => {
+        b.classList.add("disabled");
+        if (b.textContent === q.answer) {
+          b.classList.add("correct");
+        } else if (b.textContent === selected) {
+          b.classList.add("incorrect");
         }
+      });
 
-        function atualizarBarra() {
-            const barra = document.getElementById('barra');
-            barra.style.width = progresso + '%';
-
-            if (progresso === 100) {
-                alert("Você completou as questões!");
-            }
+      if (!reviewMode) {
+        if (selected === q.answer) {
+          score++;
+        } else {
+          wrongAnswers.push(q);
         }
+      }
 
-        function mostrarProximaQuestao(questao) {
-            const questaoAtual = document.getElementById('questao-' + questao);
-            questaoAtual.style.display = 'none'; // Esconde a questão atual
+      nextBtn.style.display = "inline-block";
+    }
 
-            const proximaQuestao = document.getElementById('questao-' + (questao + 1));
-            if (proximaQuestao) {
-                proximaQuestao.style.display = 'block'; // Exibe a próxima questão
-            }
+    nextBtn.onclick = () => {
+      if (!reviewMode) {
+        currentQuestion++;
+        if (currentQuestion < allQuestions.length) {
+          showQuestion();
+        } else {
+          if (wrongAnswers.length > 0) {
+            showReviewStart();
+          } else {
+            showFinalResult();
+          }
         }
-    </script>
+      } else {
+        reviewIndex++;
+        if (reviewIndex < wrongAnswers.length) {
+          showQuestion();
+        } else {
+          showFinalResult();
+        }
+      }
+    };
+
+    function showReviewStart() {
+      questionEl.style.display = "none";
+      optionsEl.style.display = "none";
+      progressEl.style.width = `100%`;
+      hintEl.style.display = "none";
+      centerMessageEl.textContent = "Agora, vamos revisar o que você errou.";
+      centerMessageEl.style.display = "block";
+      nextBtn.textContent = "Vamos lá!";
+      nextBtn.style.display = "inline-block";
+
+      nextBtn.onclick = () => {
+        reviewMode = true;
+        reviewIndex = 0;
+        questionEl.style.display = "block";
+        optionsEl.style.display = "flex";
+        hintEl.style.display = "block";
+        nextBtn.textContent = "Próxima";
+        showQuestion();
+      };
+    }
+
+    function showFinalResult() {
+      questionEl.style.display = "none";
+      optionsEl.style.display = "none";
+      centerMessageEl.style.display = "none";
+      hintEl.style.display = "none";
+      nextBtn.style.display = "none";
+      progressEl.style.width = `100%`;
+      resultEl.innerHTML = `Você concluiu!<br>Pontuação: ${score} de ${allQuestions.length}`;
+      resultEl.style.display = "block";
+    }
+
+    showQuestion();
+  </script>
 </body>
 </html>
