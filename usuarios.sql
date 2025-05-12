@@ -1,10 +1,10 @@
 CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) NOT NULL,
-  `password` varchar(255) NOT NULL, 
-  `nome` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `data_criacao` datetime NOT NULL DEFAULT current_timestamp(),
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(100) NOT NULL,
+  `usuario` VARCHAR(50) NOT NULL,
+  `senha` VARCHAR(255) NOT NULL,
+  `nivel` VARCHAR(20) DEFAULT 'Iniciante',
+  `data_cadastro` DATETIME DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  UNIQUE KEY `usuario_unico` (`usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
