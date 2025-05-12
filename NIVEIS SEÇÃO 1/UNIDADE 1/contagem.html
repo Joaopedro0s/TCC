@@ -88,6 +88,17 @@
       color: gray;
       margin-top: 10px;
     }
+
+    .home-btn {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #FF5722;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -141,6 +152,7 @@
     });
 
     updateProgress();
+    showHomeButton();
   }
 
   function selectOption(btn, value) {
@@ -194,6 +206,16 @@
       }
     };
     actionsEl.appendChild(next);
+  }
+
+  function showHomeButton() {
+    actionsEl.innerHTML = "";
+    const homeBtn = document.createElement("button");
+    homeBtn.textContent = "Voltar para a tela inicial";
+    homeBtn.className = "home-btn";
+    homeBtn.onclick = () => {
+  window.location.href = "../../index.html";  // Redireciona para a página index.html
+};    actionsEl.appendChild(homeBtn);
   }
 
   function updateProgress() {
