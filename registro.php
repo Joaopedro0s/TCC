@@ -1,39 +1,53 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+// Forçar exibição de erros (apenas desenvolvimento)
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
+header('Content-Type: application/json');
 
 require_once 'conexao.php';
 
-$data = json_decode(file_get_contents("php://input"));
+try {
+    $data = json_decode(file_get_contents('php://input'));
+    
+    if (!$data) {
+        throw new Exception("Dados inválidos");
+    }
 
-$nome = $data->nome;
-$usuario = $data->usuario;
-$senha = password_hash($data->senha, PASSWORD_DEFAULT); // Criptografia segura
+    // Validação dos dados
+    if (empty($data->nome)) throw new Exception("Nome é obrigatório");
+    if (empty($data->usuario)) throw new Exception("Usuário é obrigatório");
+    if (empty($data->senha)) throw new Exception("Senha é obrigatória");
 
-// Verifica se usuário já existe
-$sql = "SELECT id FROM usuarios WHERE usuario = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $usuario);
-$stmt->execute();
-$result = $stmt->get_result();
+    // Verifica se usuário existe
+    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE usuario = ?");
+    $stmt->bind_param("s", $data->usuario);
+    $stmt->execute();
+    
+    if ($stmt->get_result()->num_rows > 0) {
+        throw new Exception("Usuário já existe");
+    }
 
-if ($result->num_rows > 0) {
-    echo json_encode(["sucesso" => false, "mensagem" => "Usuário já existe"]);
-    exit();
+    // Cria hash da senha
+    $senhaHash = password_hash($data->senha, PASSWORD_DEFAULT);
+
+    // Insere novo usuário
+    $stmt = $conn->prepare("INSERT INTO usuarios (nome, usuario, senha) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $data->nome, $data->usuario, $senhaHash);
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Erro ao registrar usuário");
+    }
+
+    echo json_encode([
+        'sucesso' => true,
+        'mensagem' => 'Usuário registrado com sucesso'
+    ]);
+
+} catch (Exception $e) {
+    http_response_code(400);
+    echo json_encode([
+        'sucesso' => false,
+        'erro' => $e->getMessage()
+    ]);
 }
-
-// Insere novo usuário
-$sql = "INSERT INTO usuarios (nome, usuario, senha) VALUES (?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sss", $nome, $usuario, $senha);
-
-if ($stmt->execute()) {
-    echo json_encode(["sucesso" => true]);
-} else {
-    echo json_encode(["sucesso" => false, "mensagem" => "Erro no banco de dados"]);
-}
-
-$conn->close();
 ?>
