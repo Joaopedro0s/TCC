@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ============== VARIÁVEIS GLOBAIS ==============
     let currentUser = null;
+    const BASE_URL = 'http://localhost/TCC/'; // AJUSTE CHAVE: Caminho base para a pasta TCC
 
     // ============== FUNÇÕES PRINCIPAIS ==============
 
@@ -51,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 📊 Carrega estatísticas do usuário
     async function loadUserStats(userId) {
         try {
-            const response = await fetch(`http://localhost/api/estatisticas.php?user_id=${userId}`);
+            const response = await fetch(`${BASE_URL}estatisticas.php?user_id=${userId}`);
             const stats = await response.json();
             updateProgressBars(stats);
         } catch (error) {
@@ -123,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const senha = document.getElementById('password').value;
 
         try {
-            const response = await fetch('http://localhost/api/login.php', {
+            const response = await fetch(`${BASE_URL}login.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ usuario, senha })
@@ -153,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const senha = document.getElementById('regPassword').value;
 
         try {
-            const response = await fetch('http/localhost/api/registro.php', {
+            const response = await fetch(`${BASE_URL}registro.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, usuario, senha })
@@ -240,13 +241,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ============== EXEMPLO: REGISTRAR ACERTO/ERRO ==============
-    // (Chame esta função quando o usuário responder uma questão)
+    // ============== REGISTRAR ACERTO/ERRO ==============
     async function registerAnswer(unidade, acertou) {
         if (!currentUser) return;
         
         try {
-            const response = await fetch('http://localhost/api/estatisticas.php', {
+            const response = await fetch(`${BASE_URL}estatisticas.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -258,14 +258,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const data = await response.json();
             if (data.sucesso) {
-                await loadUserStats(currentUser.id); // Atualiza estatísticas
+                await loadUserStats(currentUser.id);
             }
         } catch (error) {
             console.error("Erro ao registrar resposta:", error);
         }
     }
-
-    // Exemplo de uso:
-    // registerAnswer(1, true); // Acerto na Unidade 1
-    // registerAnswer(2, false); // Erro na Unidade 2
 });
