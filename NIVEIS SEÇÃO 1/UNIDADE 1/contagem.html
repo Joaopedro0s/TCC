@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contagem até 100</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="conteudo">
+        <h1>Contagem até 100</h1>
+        <p>Escolha a alternativa correta para cada questão.</p>
+        <div class="barra-progresso">
+            <div id="barra" class="barra"></div>
+        </div>
+
+        <!-- Questões -->
+        <div id="questao-1" class="questao">
+            <p>Quantos números existem entre 1 e 10?</p>
+            <button class="btn" onclick="verificarResposta(1, 3)">3</button>
+            <button class="btn" onclick="verificarResposta(1, 2)">10</button>
+            <button class="btn" onclick="verificarResposta(1, 1)">9</button>
+        </div>
+
+        <div id="questao-2" class="questao" style="display: none;">
+            <p>Qual é o número que vem depois de 8?</p>
+            <button class="btn" onclick="verificarResposta(2, 2)">7</button>
+            <button class="btn" onclick="verificarResposta(2, 1)">9</button>
+            <button class="btn" onclick="verificarResposta(2, 3)">10</button>
+        </div>
+
+        <div id="questao-3" class="questao" style="display: none;">
+            <p>Quantos números existem entre 10 e 20?</p>
+            <button class="btn" onclick="verificarResposta(3, 3)">9</button>
+            <button class="btn" onclick="verificarResposta(3, 1)">10</button>
+            <button class="btn" onclick="verificarResposta(3, 2)">11</button>
+        </div>
+
+        <!-- Adicionar mais questões aqui conforme necessário -->
+
+    </div>
+
+    <script>
+        let progresso = 0;
+
+        function verificarResposta(questao, resposta) {
+            const respostasCorretas = [3, 1, 3]; // Respostas corretas das questões (1º questão: 3, 2º: 1, 3º: 3)
+            
+            if (resposta === respostasCorretas[questao - 1]) {
+                alert("Resposta Correta!");
+                progresso += 10;
+                atualizarBarra();
+                mostrarProximaQuestao(questao);
+            } else {
+                alert("Resposta Incorreta. Tente novamente.");
+            }
+        }
+
+        function atualizarBarra() {
+            const barra = document.getElementById('barra');
+            barra.style.width = progresso + '%';
+
+            if (progresso === 100) {
+                alert("Você completou as questões!");
+            }
+        }
+
+        function mostrarProximaQuestao(questao) {
+            const questaoAtual = document.getElementById('questao-' + questao);
+            questaoAtual.style.display = 'none'; // Esconde a questão atual
+
+            const proximaQuestao = document.getElementById('questao-' + (questao + 1));
+            if (proximaQuestao) {
+                proximaQuestao.style.display = 'block'; // Exibe a próxima questão
+            }
+        }
+    </script>
+</body>
+</html>
