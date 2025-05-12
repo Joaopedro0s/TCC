@@ -26,7 +26,7 @@ html, body {
 
 .meio {
     width: 70%;
-    background-color: #f5f5f5;
+    background-color: whitesmoke;
     overflow-y: auto;
     display: flex;
     justify-content: center;
