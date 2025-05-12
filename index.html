@@ -11,7 +11,31 @@
     <div class="layout">
         <!-- Coluna da esquerda -->
         <div class="esquerda">
-            <h2 id="palavra">K4 MATH</h2>
+            <div class="logo-container">
+                <h2 id="palavra">K4 MATH</h2>
+                <div class="user-info" id="userInfo">
+                    <!-- Dinâmico - será preenchido pelo JavaScript -->
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <p class="user-name" id="userName">Visitante</p>
+                    <p class="user-level" id="userLevel">Nível: ---</p>
+                    <button id="loginBtn" class="login-btn">Login/Registro</button>
+                    <button id="logoutBtn" class="logout-btn" style="display:none;">Sair</button>
+                </div>
+            </div>
+            
+            <nav class="menu-navegacao">
+                <ul>
+                    <li class="active"><a href="#"><span>🏠</span> Início</a></li>
+                    <li><a href="#"><span>📊</span> Progresso</a></li>
+                    <li><a href="#"><span>🏆</span> Conquistas</a></li>
+                    <li><a href="#"><span>⚙️</span> Configurações</a></li>
+                </ul>
+            </nav>
+            
+            <div class="motivacional">
+                <p id="dailyQuote">"A matemática é a linguagem do universo."</p>
+                <p id="quoteAuthor">- Galileo Galilei</p>
+            </div>
         </div>
 
         <!-- Barra de separação -->
@@ -123,9 +147,352 @@
         </div>
         <!-- Coluna da direita -->
         <div class="direita">
-            <p>Área de progresso e estatísticas</p>
-            <div class="math-symbol">Próximos desafios →</div>
+            <div class="progresso-container">
+                <h3>Seu Progresso</h3>
+                
+                <div class="unidade-progresso" id="unit1Progress">
+                    <h4>Unidade 1</h4>
+                    <div class="progresso-bar">
+                        <div class="progresso-acertos" id="unit1Correct"></div>
+                        <div class="progresso-erros" id="unit1Wrong"></div>
+                    </div>
+                    <div class="progresso-legenda">
+                        <span><span class="acertos-dot"></span> <span id="unit1CorrectText">0%</span> acertos</span>
+                        <span><span class="erros-dot"></span> <span id="unit1WrongText">0%</span> erros</span>
+                    </div>
+                </div>
+                
+                <div class="unidade-progresso" id="unit2Progress">
+                    <h4>Unidade 2</h4>
+                    <div class="progresso-bar">
+                        <div class="progresso-acertos" id="unit2Correct"></div>
+                        <div class="progresso-erros" id="unit2Wrong"></div>
+                    </div>
+                    <div class="progresso-legenda">
+                        <span><span class="acertos-dot"></span> <span id="unit2CorrectText">0%</span> acertos</span>
+                        <span><span class="erros-dot"></span> <span id="unit2WrongText">0%</span> erros</span>
+                    </div>
+                </div>
+                
+                <div class="proximos-desafios">
+                    <h4>Próximos Desafios</h4>
+                    <ul id="nextChallenges">
+                        <!-- Dinâmico -->
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- Modal de Login -->
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Nome de usuário</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="login-btn">Entrar</button>
+        </form>
+        <p class="register-link">Não tem conta? <a href="#" id="registerBtn">Registre-se</a></p>
+    </div>
+</div>
+
+<!-- Modal de Registro -->
+<div id="registerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Registro</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="regUsername">Nome de usuário</label>
+                <input type="text" id="regUsername" required>
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Senha</label>
+                <input type="password" id="regPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="regName">Seu nome</label>
+                <input type="text" id="regName" required>
+            </div>
+            <button type="submit" class="register-btn">Registrar</button>
+        </form>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Elementos do DOM
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginModal = document.getElementById('loginModal');
+    const registerModal = document.getElementById('registerModal');
+    const closeButtons = document.querySelectorAll('.close');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    
+    // Elementos de perfil
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const userLevel = document.getElementById('userLevel');
+    const userInfo = document.getElementById('userInfo');
+    
+    // Elementos de progresso
+    const unit1Correct = document.getElementById('unit1Correct');
+    const unit1Wrong = document.getElementById('unit1Wrong');
+    const unit2Correct = document.getElementById('unit2Correct');
+    const unit2Wrong = document.getElementById('unit2Wrong');
+    const unit1CorrectText = document.getElementById('unit1CorrectText');
+    const unit1WrongText = document.getElementById('unit1WrongText');
+    const unit2CorrectText = document.getElementById('unit2CorrectText');
+    const unit2WrongText = document.getElementById('unit2WrongText');
+    const nextChallenges = document.getElementById('nextChallenges');
+    
+    // Citações motivacionais
+    const dailyQuote = document.getElementById('dailyQuote');
+    const quoteAuthor = document.getElementById('quoteAuthor');
+    
+    // Citações matemáticas
+    const quotes = [
+        { text: "A matemática é a linguagem do universo.", author: "Galileo Galilei" },
+        { text: "Sem matemática, não há nada que você possa fazer.", author: "Stephen Hawking" },
+        { text: "A matemática é a rainha das ciências.", author: "Carl Friedrich Gauss" },
+        { text: "O livro da natureza está escrito em linguagem matemática.", author: "Galileo Galilei" },
+        { text: "A matemática pura é, à sua maneira, a poesia das ideias lógicas.", author: "Albert Einstein" }
+    ];
+    
+    // Desafios sugeridos
+    const challenges = [
+        "Multiplicação Avançada",
+        "Divisão Básica",
+        "Frações",
+        "Geometria Espacial",
+        "Problemas com Dinheiro",
+        "Medidas de Volume",
+        "Gráficos e Tabelas"
+    ];
+    
+    // Mostrar citação aleatória
+    function showRandomQuote() {
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        dailyQuote.textContent = `"${randomQuote.text}"`;
+        quoteAuthor.textContent = `- ${randomQuote.author}`;
+    }
+    
+    // Mostrar desafios aleatórios
+    function showRandomChallenges() {
+        nextChallenges.innerHTML = '';
+        // Embaralha os desafios e pega os 3 primeiros
+        const shuffled = [...challenges].sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 3);
+        
+        selected.forEach(challenge => {
+            const li = document.createElement('li');
+            li.textContent = challenge;
+            nextChallenges.appendChild(li);
+        });
+    }
+    
+    // Verificar se há usuário logado
+    function checkLoggedIn() {
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        if (user) {
+            // Usuário logado
+            updateUserProfile(user);
+            loginBtn.style.display = 'none';
+            logoutBtn.style.display = 'block';
+        } else {
+            // Visitante
+            userAvatar.textContent = '?';
+            userName.textContent = 'Visitante';
+            userLevel.textContent = 'Nível: ---';
+            loginBtn.style.display = 'block';
+            logoutBtn.style.display = 'none';
+        }
+        updateProgressBars();
+    }
+    
+    // Atualizar perfil do usuário
+    function updateUserProfile(user) {
+        userAvatar.textContent = user.name.charAt(0).toUpperCase();
+        userName.textContent = user.name;
+        
+        // Calcular nível com base no progresso
+        const stats = JSON.parse(localStorage.getItem('userStats')) || {};
+        const totalCorrect = (stats.unit1?.correct || 0) + (stats.unit2?.correct || 0);
+        
+        if (totalCorrect >= 15) {
+            userLevel.textContent = 'Nível: Expert';
+            userAvatar.style.backgroundColor = '#9f7aea'; // Roxo para expert
+        } else if (totalCorrect >= 5) {
+            userLevel.textContent = 'Nível: Intermediário';
+            userAvatar.style.backgroundColor = '#4299e1'; // Azul para intermediário
+        } else {
+            userLevel.textContent = 'Nível: Iniciante';
+            userAvatar.style.backgroundColor = '#48bb78'; // Verde para iniciante
+        }
+    }
+    
+    // Atualizar barras de progresso
+    function updateProgressBars() {
+        const stats = JSON.parse(localStorage.getItem('userStats')) || {};
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        
+        // Se não há usuário logado, mostra barras vazias
+        if (!currentUser) {
+            unit1Correct.style.width = '0%';
+            unit1Wrong.style.width = '0%';
+            unit2Correct.style.width = '0%';
+            unit2Wrong.style.width = '0%';
+            unit1CorrectText.textContent = '0%';
+            unit1WrongText.textContent = '0%';
+            unit2CorrectText.textContent = '0%';
+            unit2WrongText.textContent = '0%';
+            return;
+        }
+        
+        // Unidade 1
+        const unit1Total = (stats.unit1?.correct || 0) + (stats.unit1?.wrong || 0);
+        const unit1CorrectPercent = unit1Total > 0 ? Math.round((stats.unit1?.correct || 0) / unit1Total * 100) : 0;
+        const unit1WrongPercent = unit1Total > 0 ? 100 - unit1CorrectPercent : 0;
+        
+        unit1Correct.style.width = `${unit1CorrectPercent}%`;
+        unit1Wrong.style.width = `${unit1WrongPercent}%`;
+        unit1CorrectText.textContent = `${unit1CorrectPercent}%`;
+        unit1WrongText.textContent = `${unit1WrongPercent}%`;
+        
+        // Unidade 2
+        const unit2Total = (stats.unit2?.correct || 0) + (stats.unit2?.wrong || 0);
+        const unit2CorrectPercent = unit2Total > 0 ? Math.round((stats.unit2?.correct || 0) / unit2Total * 100) : 0;
+        const unit2WrongPercent = unit2Total > 0 ? 100 - unit2CorrectPercent : 0;
+        
+        unit2Correct.style.width = `${unit2CorrectPercent}%`;
+        unit2Wrong.style.width = `${unit2WrongPercent}%`;
+        unit2CorrectText.textContent = `${unit2CorrectPercent}%`;
+        unit2WrongText.textContent = `${unit2WrongPercent}%`;
+    }
+    
+    // Event Listeners
+    loginBtn.addEventListener('click', () => {
+        loginModal.style.display = 'block';
+    });
+    
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('currentUser');
+        checkLoggedIn();
+    });
+    
+    registerBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        loginModal.style.display = 'none';
+        registerModal.style.display = 'block';
+    });
+    
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+            registerModal.style.display = 'none';
+        });
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === loginModal) {
+            loginModal.style.display = 'none';
+        }
+        if (e.target === registerModal) {
+            registerModal.style.display = 'none';
+        }
+    });
+    
+    // Formulário de Login
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const user = users.find(u => u.username === username && u.password === password);
+        
+        if (user) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            loginModal.style.display = 'none';
+            checkLoggedIn();
+            loginForm.reset();
+        } else {
+            alert('Usuário ou senha incorretos!');
+        }
+    });
+    
+    // Formulário de Registro
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('regUsername').value;
+        const password = document.getElementById('regPassword').value;
+        const name = document.getElementById('regName').value;
+        
+        // Verificar se usuário já existe
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        if (users.some(u => u.username === username)) {
+            alert('Nome de usuário já existe!');
+            return;
+        }
+        
+        // Criar novo usuário
+        const newUser = { username, password, name };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        // Criar estatísticas para o novo usuário
+        const stats = JSON.parse(localStorage.getItem('userStats')) || {};
+        stats[username] = {
+            unit1: { correct: 0, wrong: 0 },
+            unit2: { correct: 0, wrong: 0 }
+        };
+        localStorage.setItem('userStats', JSON.stringify(stats));
+        
+        // Logar automaticamente
+        localStorage.setItem('currentUser', JSON.stringify(newUser));
+        registerModal.style.display = 'none';
+        checkLoggedIn();
+        registerForm.reset();
+    });
+    
+    // Inicialização
+    showRandomQuote();
+    showRandomChallenges();
+    checkLoggedIn();
+    
+    // Simular progresso (para demonstração - remova em produção)
+    function simulateProgress() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && confirm('Deseja simular progresso para demonstração?')) {
+            const stats = JSON.parse(localStorage.getItem('userStats')) || {};
+            
+            if (!stats[currentUser.username]) {
+                stats[currentUser.username] = {
+                    unit1: { correct: 0, wrong: 0 },
+                    unit2: { correct: 0, wrong: 0 }
+                };
+            }
+            
+            // Adicionar dados simulados
+            stats[currentUser.username].unit1.correct = Math.floor(Math.random() * 10) + 5;
+            stats[currentUser.username].unit1.wrong = Math.floor(Math.random() * 5);
+            stats[currentUser.username].unit2.correct = Math.floor(Math.random() * 8) + 3;
+            stats[currentUser.username].unit2.wrong = Math.floor(Math.random() * 4);
+            
+            localStorage.setItem('userStats', JSON.stringify(stats));
+            updateProgressBars();
+            updateUserProfile(currentUser);
+        }
+    }
+});
+</script>
 </body>
 </html>

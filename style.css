@@ -1,19 +1,19 @@
 :root {
-    --primary-dark: #0a192f; /* Azul escuro profundo */
-    --primary-blue: #1a365d; /* Azul escuro */
-    --accent-blue: #3182ce; /* Azul médio */
-    --accent-orange: #dd6b20; /* Laranja terroso */
-    --light-gray: #f7fafc; /* Cinza muito claro */
-    --medium-gray: #e2e8f0; /* Cinza médio */
-    --dark-gray: #4a5568; /* Cinza escuro */
-    --white: #ffffff; /* Branco puro */
-    --math-symbol: wheat; /* Cor para símbolos matemáticos */
+    --primary-dark: #0a192f;
+    --primary-blue: #1a365d;
+    --accent-blue: #3182ce;
+    --accent-orange: #dd6b20;
+    --light-gray: #f7fafc;
+    --medium-gray: #e2e8f0;
+    --dark-gray: #4a5568;
+    --white: #ffffff;
+    --math-symbol: wheat;
 }
 
 /* Reset e configurações base */
 * {
     margin: 0;
-    padding: 0  ;
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -23,16 +23,16 @@ html, body {
     color: var(--dark-gray);
     background-color: var(--light-gray);
     line-height: 1.6;
+    overflow-x: hidden; /* Previne rolagem horizontal */
 }
 
 /* Layout principal */
 .layout {
     display: flex;
     min-height: 100vh;
-    position: relative;
 }
 
-/* Barra lateral esquerda */
+/* Barra lateral esquerda FIXA */
 .esquerda {
     width: 15%;
     min-width: 180px;
@@ -42,9 +42,10 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding-top: 2rem;
+    position: fixed; /* Torna a barra fixa */
+    height: 100vh; /* Ocupa toda a altura da tela */
+    z-index: 100; /* Garante que fique acima de outros elementos */
     box-shadow: 2px 0 5px rgba(0,0,0,0.02);
-    position: relative;
-    z-index: 10;
 }
 
 #palavra {
@@ -58,27 +59,39 @@ html, body {
     text-align: center;
 }
 
-/* Barra de separação */
-.barra-separacao {
-    width: 1px;
-    background-color: var(--medium-gray);
-}
-
-/* Área central */
+/* Ajuste para o conteúdo principal */
 .meio {
     flex: 1;
     padding: 2rem 3rem;
-    overflow-y: auto;
-    background-color: var(--white);
-    position: relative;
+    margin-left: 15%; /* Igual à largura da barra esquerda */
+    width: 70%; /* Mantém a proporção original */
 }
 
+/* Barra de separação removida (não é mais necessária) */
+.barra-separacao {
+    display: none;
+}
+
+/* Ajuste para a barra direita */
+.direita {
+    width: 15%;
+    min-width: 180px;
+    background-color: var(--white);
+    border-left: 1px solid var(--medium-gray);
+    padding: 2rem 1rem;
+    overflow-y: auto;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Restante do CSS permanece igual */
 .conteudo-meio {
     max-width: 800px;
     margin: 0 auto;
 }
 
-/* Containers/Seções */
 .container {
     background-color: var(--primary-blue);
     color: var(--white);
@@ -111,84 +124,9 @@ html, body {
 }
 
 .primeira-secao {
-    margin-top: 2rem;
+    margin-top: 0; /* Ajustado para layout fixo */
 }
 
-/* Botões matemáticos */
-.btn-coluna {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.btn-round {
-    width: 80px;
-    height: 80px;
-    background-color: var(--primary-blue);
-    color: var(--white);
-    border: none;
-    border-radius: 4px;
-    font-size: 2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-round:hover {
-    background-color: var(--accent-blue);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.btn-round:active {
-    transform: translateY(1px);
-}
-
-.btn-round:before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: 0.5s;
-}
-
-.btn-round:hover:before {
-    left: 100%;
-}
-
-/* Barra direita */
-.direita {
-    width: 15%;
-    min-width: 180px;
-    background-color: var(--white);
-    border-left: 1px solid var(--medium-gray);
-    padding: 2rem 1rem;
-    overflow-y: auto;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.02);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.direita p {
-    font-size: 0.9rem;
-    color: var(--dark-gray);
-    text-align: center;
-    padding: 1rem;
-    background-color: var(--light-gray);
-    border-radius: 4px;
-    width: 100%;
-}
-/* Sistema de Botões Temáticos */
 .math-operations {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -270,19 +208,16 @@ html, body {
 .problem-card { border-top-color: #f56565; }
 .problem-card .math-icon { background-color: #fff5f5; color: #fc8181; }
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .math-operations {
-        grid-template-columns: repeat(2, 1fr);
-    }
+.direita p {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--light-gray);
+    border-radius: 4px;
+    width: 100%;
 }
 
-@media (max-width: 480px) {
-    .math-operations {
-        grid-template-columns: 1fr;
-    }
-}
-/* Efeitos matemáticos */
 .math-symbol {
     font-family: 'Roboto Mono', monospace;
     color: var(--math-symbol);
@@ -295,53 +230,339 @@ html, body {
         flex-direction: column;
     }
     
-    .esquerda, .direita {
-        width: 100%;
-        min-width: auto;
-        padding: 1rem;
-    }
-    
     .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
         border-right: none;
         border-bottom: 1px solid var(--medium-gray);
     }
     
-    .direita {
-        border-left: none;
-        border-top: 1px solid var(--medium-gray);
-        order: 3;
+    .meio {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+        order: 2;
     }
     
-    .meio {
-        order: 2;
-        padding: 1.5rem;
+    .direita {
+        width: 100%;
+        order: 3;
+        border-left: none;
+        border-top: 1px solid var(--medium-gray);
     }
     
     #palavra {
         font-size: 1.5rem;
         transform: none;
     }
-    
-    .btn-coluna {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-        gap: 1rem;
-    }
-    
-    .btn-round {
-        width: 70px;
-        height: 70px;
-        font-size: 1.8rem;
+}
+
+@media (max-width: 768px) {
+    .math-operations {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (max-width: 480px) {
-    .btn-coluna {
-        grid-template-columns: repeat(3, 1fr);
+    .math-operations {
+        grid-template-columns: 1fr;
     }
-    
-    .btn-round {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
+}
+/* Estilos para a barra de progresso */
+.progresso-container {
+    width: 100%;
+    padding: 1rem;
+}
+
+.progresso-container h3 {
+    color: var(--primary-blue);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+    border-bottom: 2px solid var(--accent-orange);
+    padding-bottom: 0.5rem;
+}
+
+.unidade-progresso {
+    margin-bottom: 1.5rem;
+}
+
+.unidade-progresso h4 {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.progresso-bar {
+    height: 20px;
+    background-color: var(--medium-gray);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 0.3rem;
+}
+
+.progresso-acertos {
+    background-color: #48bb78; /* Verde para acertos */
+    height: 100%;
+}
+
+.progresso-erros {
+    background-color: #f56565; /* Vermelho para erros */
+    height: 100%;
+}
+
+.progresso-legenda {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--dark-gray);
+}
+
+.acertos-dot, .erros-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.acertos-dot {
+    background-color: #48bb78;
+}
+
+.erros-dot {
+    background-color: #f56565;
+}
+
+.proximos-desafios {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px dashed var(--medium-gray);
+}
+
+.proximos-desafios h4 {
+    color: var(--primary-blue);
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.proximos-desafios ul {
+    list-style-type: none;
+}
+
+.proximos-desafios li {
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+    color: var(--dark-gray);
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.proximos-desafios li:before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent-orange);
+}
+
+/* Estilos para a coluna esquerda */
+.logo-container {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--medium-gray);
+    margin-bottom: 1rem;
+}
+
+.user-info {
+    margin-top: 1.5rem;
+}
+
+.user-avatar {
+    width: 60px;
+    height: 60px;
+    background-color: var(--primary-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.user-name {
+    font-weight: 600;
+    margin-top: 0.5rem;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+.user-level {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+    text-align: center;
+    margin-top: 0.2rem;
+}
+
+.menu-navegacao {
+    margin: 2rem 0;
+}
+
+.menu-navegacao ul {
+    list-style-type: none;
+}
+
+.menu-navegacao li {
+    margin-bottom: 0.8rem;
+}
+
+.menu-navegacao a {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: var(--dark-gray);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.menu-navegacao a span {
+    margin-right: 10px;
+    font-size: 1.1rem;
+}
+
+.menu-navegacao a:hover {
+    background-color: var(--light-gray);
+    color: var(--primary-blue);
+}
+
+.menu-navegacao .active a {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+.motivacional {
+    margin-top: auto;
+    padding: 1rem;
+    font-size: 0.85rem;
+    text-align: center;
+    color: var(--dark-gray);
+    font-style: italic;
+    border-top: 1px solid var(--medium-gray);
+}
+
+.motivacional p:first-child {
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.motivacional p:last-child {
+    font-size: 0.75rem;
+}
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: var(--white);
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--dark-gray);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--dark-gray);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    font-family: 'Roboto Mono', monospace;
+}
+
+.login-btn, .register-btn {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    margin-top: 1rem;
+    transition: background-color 0.3s;
+}
+
+.login-btn:hover, .register-btn:hover {
+    background-color: var(--accent-blue);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.register-link a {
+    color: var(--primary-blue);
+    text-decoration: none;
+}
+
+#logoutBtn {
+    background-color: var(--accent-orange);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Roboto Mono', monospace;
+    margin-top: 0.5rem;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+#logoutBtn:hover {
+    background-color: #c05621;
+}
+
+/* Responsividade para modais */
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 20% auto;
+        width: 85%;
     }
 }
