@@ -1,39 +1,57 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+require_once 'includes/config.php';
 
-require_once 'conexao.php';
-
-$data = json_decode(file_get_contents("php://input"));
-
-$usuario = $data->usuario;
-$senha = $data->senha;
-
-$sql = "SELECT id, nome, senha, nivel FROM usuarios WHERE usuario = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $usuario);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    if (password_verify($senha, $row['senha'])) {
-        echo json_encode([
-            "sucesso" => true,
-            "usuario" => [
-                "id" => $row['id'],
-                "nome" => $row['nome'],
-                "nivel" => $row['nivel']
-            ]
-        ]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $senha = $_POST['senha'];
+    
+    if ($email && !empty($senha)) {
+        try {
+            $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
+            $stmt->execute([$email]);
+            $usuario = $stmt->fetch();
+            
+            if ($usuario && password_verify($senha, $usuario['senha'])) {
+                $_SESSION['usuario_id'] = $usuario['id'];
+                $_SESSION['usuario_nome'] = $usuario['nome'];
+                header("Location: dashboard.php");
+                exit();
+            } else {
+                $_SESSION['erro'] = "E-mail ou senha incorretos!";
+            }
+        } catch(PDOException $e) {
+            $_SESSION['erro'] = "Erro ao fazer login: " . $e->getMessage();
+        }
     } else {
-        echo json_encode(["sucesso" => false, "mensagem" => "Senha incorreta"]);
+        $_SESSION['erro'] = "Por favor, preencha todos os campos corretamente!";
     }
-} else {
-    echo json_encode(["sucesso" => false, "mensagem" => "Usuário não encontrado"]);
 }
 
-$conn->close();
+include 'includes/header.php';
 ?>
+
+<div class="container">
+    <h2>Login</h2>
+    
+    <?php if (isset($_SESSION['erro'])): ?>
+        <div class="alert alert-danger"><?= $_SESSION['erro']; unset($_SESSION['erro']); ?></div>
+    <?php endif; ?>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label>E-mail:</label>
+            <input type="email" name="email" required class="form-control">
+        </div>
+        
+        <div class="form-group">
+            <label>Senha:</label>
+            <input type="password" name="senha" required class="form-control">
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+    
+    <p class="mt-3">Não tem conta? <a href="register.php">Registre-se aqui</a></p>
+</div>
+
+<?php include 'includes/footer.php'; ?>
