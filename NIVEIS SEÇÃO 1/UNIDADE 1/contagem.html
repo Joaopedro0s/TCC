@@ -2,119 +2,326 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contagem até 100</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f0f0f0;
+    :root {
+      --primary-dark: #0a192f;
+      --primary-blue: #1a365d;
+      --accent-blue: #3182ce;
+      --accent-orange: #dd6b20;
+      --light-gray: #f7fafc;
+      --medium-gray: #e2e8f0;
+      --dark-gray: #4a5568;
+      --white: #ffffff;
+      --math-symbol: wheat;
     }
 
-    #quiz-container {
-      max-width: 500px;
-      margin: 50px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--dark-gray);
+      background-color: var(--light-gray);
+      line-height: 1.6;
+    }
+
+    /* Layout principal adaptado para o quiz */
+    .quiz-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-right: 1px solid var(--medium-gray);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+    }
+
+    #palavra {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 3px solid var(--accent-orange);
+      transform: rotate(-2deg);
       text-align: center;
     }
 
+    /* Conteúdo principal do quiz */
+    .quiz-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container do quiz */
+    #quiz-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-top: 4px solid var(--primary-blue);
+    }
+
+    /* Barra de progresso */
     #progress {
       height: 20px;
-      background-color: #ddd;
+      background-color: var(--medium-gray);
       border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
     }
 
     #progress-bar {
       height: 100%;
       width: 0%;
-      background-color: #4CAF50;
+      background-color: var(--accent-blue);
+      transition: width 0.3s ease;
     }
 
+    /* Estilo das perguntas */
     .question {
-      font-size: 22px;
-      margin-bottom: 20px;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      font-weight: 500;
+      position: relative;
+      padding-bottom: 0.5rem;
     }
 
+    .question:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-orange);
+    }
+
+    /* Opções de resposta */
     .options {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
     }
 
     .option-btn {
-      padding: 10px;
-      font-size: 18px;
-      border: 2px solid transparent;
-      border-radius: 8px;
-      background-color: #eee;
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-family: 'Roboto Mono', monospace;
+      border: 2px solid var(--medium-gray);
+      border-radius: 6px;
+      background-color: var(--light-gray);
       cursor: pointer;
-      transition: 0.3s;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      background-color: var(--medium-gray);
     }
 
     .option-btn.selected {
-      border-color: #2196F3;
-      background-color: #d0e9ff;
-    }
-
-    .option-btn.wrong {
-      background-color: #f44336 !important;
-      color: white;
+      border-color: var(--accent-blue);
+      background-color: rgba(49, 130, 206, 0.1);
     }
 
     .option-btn.correct {
-      background-color: #4CAF50 !important;
-      color: white;
+      background-color: #48bb78 !important;
+      color: var(--white);
+      border-color: #48bb78;
     }
 
+    .option-btn.wrong {
+      background-color: #f56565 !important;
+      color: var(--white);
+      border-color: #f56565;
+    }
+
+    /* Botões de ação */
     .action-btn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #2196F3;
-      color: white;
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background-color: var(--accent-blue);
+      color: var(--white);
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
+      font-family: 'Roboto Mono', monospace;
+      transition: background-color 0.3s;
+      width: 100%;
     }
 
-    .hint {
-      font-size: 14px;
-      color: gray;
-      margin-top: 10px;
+    .action-btn:hover {
+      background-color: #2c5282;
     }
 
     .home-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background-color: #FF5722;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+      background-color: var(--accent-orange);
+      margin-top: 1rem;
+    }
+
+    .home-btn:hover {
+      background-color: #c05621;
+    }
+
+    /* Dica */
+    .hint {
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background-color: var(--light-gray);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-orange);
+    }
+
+    /* Resultados */
+    .results {
+      font-size: 1.2rem;
+      color: var(--primary-blue);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Barra direita (se necessário) */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-left: 1px solid var(--medium-gray);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .quiz-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid var(--medium-gray);
+      }
+      
+      .quiz-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--medium-gray);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #quiz-container {
+        padding: 1.5rem;
+      }
+      
+      .question {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
 <body>
 
-<div id="quiz-container">
-  <div id="progress">
-    <div id="progress-bar"></div>
-  </div>
-  <div id="question" class="question"></div>
-  <div id="options" class="options"></div>
-  <div id="actions"></div>
+<div class="quiz-layout">
+  <aside class="esquerda">
+    <div id="palavra">Contagem</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: Iniciante</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você está indo bem!</p>
+      <p>Continue praticando</p>
+    </div>
+  </aside>
+  
+  <main class="quiz-content">
+    <div id="quiz-container">
+      <div id="progress">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="hint" class="hint" style="display: none;"></div>
+      <div id="actions"></div>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="progresso-container">
+      <h3>Seu Progresso</h3>
+      <div class="unidade-progresso">
+        <h4>Contagem</h4>
+        <div class="progresso-bar">
+          <div class="progresso-acertos" style="width: 0%"></div>
+        </div>
+        <div class="progresso-legenda">
+          <span><span class="acertos-dot"></span> Acertos: <span id="acertos-count">0</span></span>
+          <span><span class="erros-dot"></span> Erros: <span id="erros-count">0</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
 </div>
-
-<a href="../../index.html">
-  <button>Voltar para a tela inicial</button>
-</a>
 
 <script>
   const questions = [
@@ -134,11 +341,17 @@
   let score = 0;
   let selectedAnswer = null;
   let wrongAnswers = [];
+  let acertosCount = 0;
+  let errosCount = 0;
 
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
   const actionsEl = document.getElementById("actions");
   const progressBar = document.getElementById("progress-bar");
+  const hintEl = document.getElementById("hint");
+  const acertosCountEl = document.getElementById("acertos-count");
+  const errosCountEl = document.getElementById("erros-count");
+  const progressoAcertos = document.querySelector(".progresso-acertos");
 
   function loadQuestion() {
     selectedAnswer = null;
@@ -146,6 +359,7 @@
     questionEl.textContent = q.q;
     optionsEl.innerHTML = "";
     actionsEl.innerHTML = "";
+    hintEl.style.display = "none";
 
     q.options.forEach(option => {
       const btn = document.createElement("button");
@@ -156,13 +370,16 @@
     });
 
     updateProgress();
-    showHomeButton();
   }
 
   function selectOption(btn, value) {
     selectedAnswer = value;
     document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
     btn.classList.add("selected");
+
+    // Mostrar dica quando selecionar uma opção
+    hintEl.textContent = "Dica: " + questions[current].hint;
+    hintEl.style.display = "block";
 
     showSendButton();
   }
@@ -186,12 +403,23 @@
         if (selectedAnswer === q.answer) {
           btn.classList.add("correct");
           score++;
+          acertosCount++;
+          acertosCountEl.textContent = acertosCount;
         } else {
           btn.classList.add("wrong");
           wrongAnswers.push({ ...q });
+          errosCount++;
+          errosCountEl.textContent = errosCount;
         }
       }
+      if (parseInt(btn.textContent) === q.answer) {
+        btn.classList.add("correct");
+      }
     });
+
+    // Atualizar barra de progresso
+    const percentAcertos = (acertosCount / (acertosCount + errosCount)) * 100;
+    progressoAcertos.style.width = percentAcertos + "%";
 
     showNextButton();
   }
@@ -212,29 +440,23 @@
     actionsEl.appendChild(next);
   }
 
-  function showHomeButton() {
-    actionsEl.innerHTML = "";
-    const homeBtn = document.createElement("button");
-    homeBtn.textContent = "Voltar para a tela inicial";
-    homeBtn.className = "home-btn";
-    homeBtn.onclick = () => {
-  window.location.href = "../../index.html";  // Redireciona para a página index.html
-};    actionsEl.appendChild(homeBtn);
-  }
-
   function updateProgress() {
     const percent = (current / questions.length) * 100;
     progressBar.style.width = percent + "%";
   }
 
   function showResults() {
-    questionEl.textContent = `Você acertou ${score} de ${questions.length} questões!`;
-    optionsEl.innerHTML = "";
+    questionEl.textContent = `Resultado Final`;
+    optionsEl.innerHTML = `
+      <div class="results">
+        Você acertou ${score} de ${questions.length} questões!
+      </div>
+    `;
     actionsEl.innerHTML = "";
 
     if (wrongAnswers.length > 0) {
       const reviewBtn = document.createElement("button");
-      reviewBtn.textContent = "Vamos revisar o que você errou!";
+      reviewBtn.textContent = "Revisar erros";
       reviewBtn.className = "action-btn";
       reviewBtn.onclick = () => {
         current = 0;
@@ -243,6 +465,14 @@
       };
       actionsEl.appendChild(reviewBtn);
     }
+
+    const homeBtn = document.createElement("button");
+    homeBtn.textContent = "Voltar ao Início";
+    homeBtn.className = "action-btn home-btn";
+    homeBtn.onclick = () => {
+      window.location.href = "../../index.html";
+    };
+    actionsEl.appendChild(homeBtn);
   }
 
   // Revisão de erros
@@ -273,16 +503,28 @@
       hint.textContent = "Dica: " + q.hint;
       optionsEl.appendChild(hint);
     } else {
-      questionEl.textContent = "Revisão concluída! Parabéns!";
-      optionsEl.innerHTML = "";
+      questionEl.textContent = "Revisão concluída!";
+      optionsEl.innerHTML = `
+        <div class="results">
+          Você revisou todos os erros!
+        </div>
+      `;
       actionsEl.innerHTML = "";
+
+      const homeBtn = document.createElement("button");
+      homeBtn.textContent = "Voltar ao Início";
+      homeBtn.className = "action-btn home-btn";
+      homeBtn.onclick = () => {
+        window.location.href = "../../index.html";
+      };
+      actionsEl.appendChild(homeBtn);
     }
   }
 
   function showReviewSendButton(q) {
     actionsEl.innerHTML = "";
     const send = document.createElement("button");
-    send.textContent = "Enviar resposta";
+    send.textContent = "Verificar";
     send.className = "action-btn";
     send.onclick = () => checkReviewAnswer(q);
     actionsEl.appendChild(send);
@@ -299,6 +541,9 @@
         } else {
           btn.classList.add("wrong");
         }
+      }
+      if (parseInt(btn.textContent) === q.answer) {
+        btn.classList.add("correct");
       }
     });
 
