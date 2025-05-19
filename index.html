@@ -19,7 +19,7 @@
                     <div class="user-avatar" id="userAvatar">?</div>
                     <p class="user-name" id="userName">Visitante</p>
                     <p class="user-level" id="userLevel">Nível: ---</p>
-                    <button id="loginBtn" class="login-btn">Login/Registro</button>
+                    <button id="loginBtn" class="login-btn" onclick="window.location.href='login.html';">Login/Registro</button>
                     <button id="logoutBtn" class="logout-btn" style="display:none;">Sair</button>
                 </div>
             </div>
@@ -184,47 +184,5 @@
             </div>
         </div>
     </div>
-    <!-- Modal de Login -->
-<div id="loginModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Nome de usuário</label>
-                <input type="text" id="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit" class="login-btn">Entrar</button>
-        </form>
-        <p class="register-link">Não tem conta? <a href="#" id="registerBtn">Registre-se</a></p>
-    </div>
-</div>
-
-<!-- Modal de Registro -->
-<div id="registerModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Registro</h2>
-        <form id="registerForm">
-            <div class="form-group">
-                <label for="regUsername">Nome de usuário</label>
-                <input type="text" id="regUsername" required>
-            </div>
-            <div class="form-group">
-                <label for="regPassword">Senha</label>
-                <input type="password" id="regPassword" required>
-            </div>
-            <div class="form-group">
-                <label for="regName">Seu nome</label>
-                <input type="text" id="regName" required>
-            </div>
-            <button type="submit" class="register-btn">Registrar</button>
-        </form>
-    </div>
-</div>
 </body>
 </html>
