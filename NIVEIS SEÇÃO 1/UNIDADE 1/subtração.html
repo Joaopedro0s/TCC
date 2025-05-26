@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subtração para o 1º Ano</title>
+  <style>
+    :root {
+      --primary-dark: #0a192f;
+      --primary-blue: #1a365d;
+      --accent-blue: #3182ce;
+      --accent-orange: #dd6b20;
+      --light-gray: #f7fafc;
+      --medium-gray: #e2e8f0;
+      --dark-gray: #4a5568;
+      --white: #ffffff;
+      --math-symbol: wheat;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--dark-gray);
+      background-color: var(--light-gray);
+      line-height: 1.6;
+    }
+
+    /* Layout principal adaptado para o quiz */
+    .quiz-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-right: 1px solid var(--medium-gray);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+    }
+
+    #palavra {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 3px solid var(--accent-orange);
+      transform: rotate(-2deg);
+      text-align: center;
+    }
+
+    /* Conteúdo principal do quiz */
+    .quiz-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container do quiz */
+    #quiz-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-top: 4px solid var(--primary-blue);
+    }
+
+    /* Barra de progresso */
+    #progress {
+      height: 20px;
+      background-color: var(--medium-gray);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent-blue);
+      transition: width 0.3s ease;
+    }
+
+    /* Estilo das perguntas */
+    .question {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      font-weight: 500;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .question:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-orange);
+    }
+
+    /* Opções de resposta */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .option-btn {
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-family: 'Roboto Mono', monospace;
+      border: 2px solid var(--medium-gray);
+      border-radius: 6px;
+      background-color: var(--light-gray);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      background-color: var(--medium-gray);
+    }
+
+    .option-btn.selected {
+      border-color: var(--accent-blue);
+      background-color: rgba(49, 130, 206, 0.1);
+    }
+
+    .option-btn.correct {
+      background-color: #48bb78 !important;
+      color: var(--white);
+      border-color: #48bb78;
+    }
+
+    .option-btn.wrong {
+      background-color: #f56565 !important;
+      color: var(--white);
+      border-color: #f56565;
+    }
+
+    /* Botões de ação */
+    .action-btn {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background-color: var(--accent-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Roboto Mono', monospace;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+
+    .action-btn:hover {
+      background-color: #2c5282;
+    }
+
+    .home-btn {
+      background-color: var(--accent-orange);
+      margin-top: 1rem;
+    }
+
+    .home-btn:hover {
+      background-color: #c05621;
+    }
+
+    /* Dica */
+    .hint {
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background-color: var(--light-gray);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-orange);
+    }
+
+    /* Resultados */
+    .results {
+      font-size: 1.2rem;
+      color: var(--primary-blue);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Barra direita (se necessário) */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-left: 1px solid var(--medium-gray);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .quiz-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid var(--medium-gray);
+      }
+      
+      .quiz-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--medium-gray);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #quiz-container {
+        padding: 1.5rem;
+      }
+      
+      .question {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-layout">
+  <aside class="esquerda">
+    <div id="palavra">Subtração</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: 1º Ano</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você está indo bem!</p>
+      <p>Continue praticando</p>
+    </div>
+  </aside>
+  
+  <main class="quiz-content">
+    <div id="quiz-container">
+      <div id="progress">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="hint" class="hint" style="display: none;"></div>
+      <div id="actions"></div>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="progresso-container">
+      <h3>Seu Progresso</h3>
+      <div class="unidade-progresso">
+        <h4>Subtração</h4>
+        <div class="progresso-bar">
+          <div class="progresso-acertos" style="width: 0%"></div>
+        </div>
+        <div class="progresso-legenda">
+          <span><span class="acertos-dot"></span> Acertos: <span id="acertos-count">0</span></span>
+          <span><span class="erros-dot"></span> Erros: <span id="erros-count">0</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  const questions = [
+    { 
+      q: "Quanto é 5 - 2?", 
+      options: [2, 3, 4], 
+      answer: 3, 
+      hint: "Conte com seus dedos: 5 dedos - 2 dedos = 3 dedos." 
+    },
+    { 
+      q: "Se você tem 4 balões e estoura 1, quantos balões sobraram?", 
+      options: [2, 3, 4], 
+      answer: 3, 
+      hint: "4 balões - 1 balão = 3 balões." 
+    },
+    { 
+      q: "Maria tinha 6 lápis e perdeu 2. Quantos lápis ela tem agora?", 
+      options: [3, 4, 5], 
+      answer: 4, 
+      hint: "6 lápis - 2 lápis = 4 lápis." 
+    },
+    { 
+      q: "Na árvore havia 8 maçãs. Caíram 3. Quantas maçãs ficaram?", 
+      options: [4, 5, 6], 
+      answer: 5, 
+      hint: "8 maçãs - 3 maçãs = 5 maçãs." 
+    },
+    { 
+      q: "Se um gato tem 4 patas e perde 1, quantas patas ele tem agora?", 
+      options: [2, 3, 4], 
+      answer: 3, 
+      hint: "4 patas - 1 pata = 3 patas." 
+    },
+    { 
+      q: "Pedro tinha 7 figurinhas e deu 3 para seu amigo. Quantas figurinhas ele tem agora?", 
+      options: [3, 4, 5], 
+      answer: 4, 
+      hint: "7 figurinhas - 3 figurinhas = 4 figurinhas." 
+    },
+    { 
+      q: "Na caixa havia 9 bolinhas e tiraram 4. Quantas bolinhas sobraram?", 
+      options: [4, 5, 6], 
+      answer: 5, 
+      hint: "9 bolinhas - 4 bolinhas = 5 bolinhas." 
+    },
+    { 
+      q: "Ana tem 8 anos e seu irmão é 3 anos mais novo. Quantos anos tem o irmão?", 
+      options: [4, 5, 6], 
+      answer: 5, 
+      hint: "8 anos - 3 anos = 5 anos." 
+    },
+    { 
+      q: "Uma galinha botou 5 ovos e 2 quebraram. Quantos ovos inteiros sobraram?", 
+      options: [2, 3, 4], 
+      answer: 3, 
+      hint: "5 ovos - 2 ovos = 3 ovos." 
+    },
+    { 
+      q: "No jardim havia 10 flores e 4 murcharam. Quantas flores bonitas restaram?", 
+      options: [5, 6, 7], 
+      answer: 6, 
+      hint: "10 flores - 4 flores = 6 flores." 
+    }
+  ];
+
+  let current = 0;
+  let score = 0;
+  let selectedAnswer = null;
+  let wrongAnswers = [];
+  let acertosCount = 0;
+  let errosCount = 0;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const actionsEl = document.getElementById("actions");
+  const progressBar = document.getElementById("progress-bar");
+  const hintEl = document.getElementById("hint");
+  const acertosCountEl = document.getElementById("acertos-count");
+  const errosCountEl = document.getElementById("erros-count");
+  const progressoAcertos = document.querySelector(".progresso-acertos");
+
+  function loadQuestion() {
+    selectedAnswer = null;
+    const q = questions[current];
+    questionEl.textContent = q.q;
+    optionsEl.innerHTML = "";
+    actionsEl.innerHTML = "";
+    hintEl.style.display = "none";
+
+    q.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.textContent = option;
+      btn.onclick = () => selectOption(btn, option);
+      optionsEl.appendChild(btn);
+    });
+
+    updateProgress();
+  }
+
+  function selectOption(btn, value) {
+    selectedAnswer = value;
+    document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    // Mostrar dica quando selecionar uma opção
+    hintEl.textContent = "Dica: " + questions[current].hint;
+    hintEl.style.display = "block";
+
+    showSendButton();
+  }
+
+  function showSendButton() {
+    actionsEl.innerHTML = "";
+    const send = document.createElement("button");
+    send.textContent = "Enviar resposta";
+    send.className = "action-btn";
+    send.onclick = checkAnswer;
+    actionsEl.appendChild(send);
+  }
+
+  function checkAnswer() {
+    const q = questions[current];
+    const buttons = document.querySelectorAll(".option-btn");
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      if (parseInt(btn.textContent) === selectedAnswer) {
+        if (selectedAnswer === q.answer) {
+          btn.classList.add("correct");
+          score++;
+          acertosCount++;
+          acertosCountEl.textContent = acertosCount;
+        } else {
+          btn.classList.add("wrong");
+          wrongAnswers.push({ ...q });
+          errosCount++;
+          errosCountEl.textContent = errosCount;
+        }
+      }
+      if (parseInt(btn.textContent) === q.answer) {
+        btn.classList.add("correct");
+      }
+    });
+
+    // Atualizar barra de progresso
+    const percentAcertos = (acertosCount / (acertosCount + errosCount)) * 100;
+    progressoAcertos.style.width = percentAcertos + "%";
+
+    showNextButton();
+  }
+
+  function showNextButton() {
+    actionsEl.innerHTML = "";
+    const next = document.createElement("button");
+    next.textContent = "Próxima";
+    next.className = "action-btn";
+    next.onclick = () => {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    };
+    actionsEl.appendChild(next);
+  }
+
+  function updateProgress() {
+    const percent = (current / questions.length) * 100;
+    progressBar.style.width = percent + "%";
+  }
+
+  function showResults() {
+    questionEl.textContent = `Resultado Final`;
+    optionsEl.innerHTML = `
+      <div class="results">
+        Você acertou ${score} de ${questions.length} questões!
+      </div>
+    `;
+    actionsEl.innerHTML = "";
+
+    if (wrongAnswers.length > 0) {
+      const reviewBtn = document.createElement("button");
+      reviewBtn.textContent = "Revisar erros";
+      reviewBtn.className = "action-btn";
+      reviewBtn.onclick = () => {
+        current = 0;
+        reviewIndex = 0;
+        showReviewQuestion();
+      };
+      actionsEl.appendChild(reviewBtn);
+    }
+
+    const homeBtn = document.createElement("button");
+    homeBtn.textContent = "Voltar ao Início";
+    homeBtn.className = "action-btn home-btn";
+    homeBtn.onclick = () => {
+      window.location.href = "../../index.html";
+    };
+    actionsEl.appendChild(homeBtn);
+  }
+
+  // Revisão de erros
+  let reviewIndex = 0;
+
+  function showReviewQuestion() {
+    if (reviewIndex < wrongAnswers.length) {
+      const q = wrongAnswers[reviewIndex];
+      questionEl.textContent = q.q;
+      optionsEl.innerHTML = "";
+      actionsEl.innerHTML = "";
+
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = option;
+        btn.onclick = () => {
+          document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedAnswer = option;
+          showReviewSendButton(q);
+        };
+        optionsEl.appendChild(btn);
+      });
+
+      const hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "Dica: " + q.hint;
+      optionsEl.appendChild(hint);
+    } else {
+      questionEl.textContent = "Revisão concluída!";
+      optionsEl.innerHTML = `
+        <div class="results">
+          Você revisou todos os erros!
+        </div>
+      `;
+      actionsEl.innerHTML = "";
+
+      const homeBtn = document.createElement("button");
+      homeBtn.textContent = "Voltar ao Início";
+      homeBtn.className = "action-btn home-btn";
+      homeBtn.onclick = () => {
+        window.location.href = "../../index.html";
+      };
+      actionsEl.appendChild(homeBtn);
+    }
+  }
+
+  function showReviewSendButton(q) {
+    actionsEl.innerHTML = "";
+    const send = document.createElement("button");
+    send.textContent = "Verificar";
+    send.className = "action-btn";
+    send.onclick = () => checkReviewAnswer(q);
+    actionsEl.appendChild(send);
+  }
+
+  function checkReviewAnswer(q) {
+    const buttons = document.querySelectorAll(".option-btn");
+
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      if (parseInt(btn.textContent) === selectedAnswer) {
+        if (selectedAnswer === q.answer) {
+          btn.classList.add("correct");
+        } else {
+          btn.classList.add("wrong");
+        }
+      }
+      if (parseInt(btn.textContent) === q.answer) {
+        btn.classList.add("correct");
+      }
+    });
+
+    const next = document.createElement("button");
+    next.textContent = "Próxima";
+    next.className = "action-btn";
+    next.onclick = () => {
+      reviewIndex++;
+      showReviewQuestion();
+    };
+    actionsEl.innerHTML = "";
+    actionsEl.appendChild(next);
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>

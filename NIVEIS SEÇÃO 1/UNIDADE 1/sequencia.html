@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padrões e Ordenação - 1º Ano</title>
+  <style>
+    :root {
+      --primary-dark: #0a192f;
+      --primary-blue: #1a365d;
+      --accent-blue: #3182ce;
+      --accent-orange: #dd6b20;
+      --light-gray: #f7fafc;
+      --medium-gray: #e2e8f0;
+      --dark-gray: #4a5568;
+      --white: #ffffff;
+      --math-symbol: wheat;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Roboto Mono', monospace;
+      color: var(--dark-gray);
+      background-color: var(--light-gray);
+      line-height: 1.6;
+    }
+
+    /* Layout principal adaptado para o quiz */
+    .quiz-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-right: 1px solid var(--medium-gray);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+    }
+
+    #palavra {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 3px solid var(--accent-orange);
+      transform: rotate(-2deg);
+      text-align: center;
+    }
+
+    /* Conteúdo principal do quiz */
+    .quiz-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container do quiz */
+    #quiz-container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      border-top: 4px solid var(--primary-blue);
+    }
+
+    /* Barra de progresso */
+    #progress {
+      height: 20px;
+      background-color: var(--medium-gray);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--accent-blue);
+      transition: width 0.3s ease;
+    }
+
+    /* Estilo das perguntas */
+    .question {
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      font-weight: 500;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .question:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background-color: var(--accent-orange);
+    }
+
+    /* Opções de resposta */
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .option-btn {
+      padding: 0.8rem 1rem;
+      font-size: 1rem;
+      font-family: 'Roboto Mono', monospace;
+      border: 2px solid var(--medium-gray);
+      border-radius: 6px;
+      background-color: var(--light-gray);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: left;
+    }
+
+    .option-btn:hover {
+      background-color: var(--medium-gray);
+    }
+
+    .option-btn.selected {
+      border-color: var(--accent-blue);
+      background-color: rgba(49, 130, 206, 0.1);
+    }
+
+    .option-btn.correct {
+      background-color: #48bb78 !important;
+      color: var(--white);
+      border-color: #48bb78;
+    }
+
+    .option-btn.wrong {
+      background-color: #f56565 !important;
+      color: var(--white);
+      border-color: #f56565;
+    }
+
+    /* Botões de ação */
+    .action-btn {
+      margin-top: 1rem;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      background-color: var(--accent-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Roboto Mono', monospace;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+
+    .action-btn:hover {
+      background-color: #2c5282;
+    }
+
+    .home-btn {
+      background-color: var(--accent-orange);
+      margin-top: 1rem;
+    }
+
+    .home-btn:hover {
+      background-color: #c05621;
+    }
+
+    /* Dica */
+    .hint {
+      font-size: 0.9rem;
+      color: var(--dark-gray);
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background-color: var(--light-gray);
+      border-radius: 6px;
+      border-left: 3px solid var(--accent-orange);
+    }
+
+    /* Resultados */
+    .results {
+      font-size: 1.2rem;
+      color: var(--primary-blue);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Barra direita (se necessário) */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--white);
+      border-left: 1px solid var(--medium-gray);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .quiz-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid var(--medium-gray);
+      }
+      
+      .quiz-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--medium-gray);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #quiz-container {
+        padding: 1.5rem;
+      }
+      
+      .question {
+        font-size: 1.1rem;
+      }
+      
+      .option-btn {
+        padding: 0.7rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Estilo para imagens de padrões */
+    .pattern-image {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .pattern-options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pattern-option {
+      width: 60px;
+      height: 60px;
+      border: 2px solid var(--medium-gray);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .pattern-option:hover {
+      transform: scale(1.1);
+    }
+
+    .pattern-option.selected {
+      border-color: var(--accent-blue);
+      background-color: rgba(49, 130, 206, 0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-layout">
+  <aside class="esquerda">
+    <div id="palavra">Padrões</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: 1º Ano</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você está indo bem!</p>
+      <p>Continue praticando</p>
+    </div>
+  </aside>
+  
+  <main class="quiz-content">
+    <div id="quiz-container">
+      <div id="progress">
+        <div id="progress-bar"></div>
+      </div>
+      <div id="question" class="question"></div>
+      <div id="options" class="options"></div>
+      <div id="hint" class="hint" style="display: none;"></div>
+      <div id="actions"></div>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="progresso-container">
+      <h3>Seu Progresso</h3>
+      <div class="unidade-progresso">
+        <h4>Padrões</h4>
+        <div class="progresso-bar">
+          <div class="progresso-acertos" style="width: 0%"></div>
+        </div>
+        <div class="progresso-legenda">
+          <span><span class="acertos-dot"></span> Acertos: <span id="acertos-count">0</span></span>
+          <span><span class="erros-dot"></span> Erros: <span id="erros-count">0</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+  const questions = [
+  { 
+    q: "Complete a sequência: 1, 2, 3, ___, 5", 
+    options: [4, 5, 7], 
+    answer: 4, 
+    hint: "Estamos contando de 1 em 1." 
+  },
+  { 
+    q: "Complete com a figura correta: 🔴 🔵 🔴 🔵 ___ ___", 
+    options: ["🔴 🔵", "🔵 🔴", "🔴 🔴"], 
+    answer: "🔴 🔵", 
+    hint: "A sequência alterna entre vermelho e azul." 
+  },
+  { 
+    q: "Qual número vem depois do 9? 7, 8, 9, ___", 
+    options: [10, 11, 12], 
+    answer: 10, 
+    hint: "A sequência continua aumentando de 1 em 1." 
+  },
+  { 
+    q: "Complete com a figura certa: 🐱 🐶 🐱 🐶 ___", 
+    options: ["🐱", "🐶", "🐰"], 
+    answer: "🐱", 
+    hint: "Alterna entre gato e cachorro." 
+  },
+  { 
+    q: "Complete a sequência: 10, 12, 14, ___,", 
+    options: [16, 18, 20], 
+    answer: 16, 
+    hint: "A sequência cresce de 2 em 2." 
+  },
+  { 
+    q: "Qual é o próximo número? 5, 10, 15, ___,", 
+    options: [20, 25, 30], 
+    answer: 20, 
+    hint: "Contando de 5 em 5." 
+  },
+  { 
+    q: "Qual sequência está em ordem crescente?", 
+    options: ["3, 6, 2", "1, 2, 3", "5, 4, 3"], 
+    answer: "1, 2, 3", 
+    hint: "Crescente significa do menor para o maior." 
+  },
+  { 
+    q: "Qual é o próximo número par? 2, 4, 6, 8, ___", 
+    options: [9, 10, 11], 
+    answer: 10, 
+    hint: "Os números pares são múltiplos de 2." 
+  },
+  { 
+    q: "Complete a sequência de letras: A, B, C, ___, ___", 
+    options: ["D E", "C D", "D F"], 
+    answer: "D E", 
+    hint: "A sequência segue o alfabeto." 
+  },
+  { 
+    q: "Qual figura completa a sequência: 🟡 🟢 🟡 🟢 🟡 ___", 
+    options: ["🟢", "🟡", "🔴"], 
+    answer: "🟢", 
+    hint: "A sequência alterna amarelo e verde." 
+  }
+];
+
+  let current = 0;
+  let score = 0;
+  let selectedAnswer = null;
+  let wrongAnswers = [];
+  let acertosCount = 0;
+  let errosCount = 0;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const actionsEl = document.getElementById("actions");
+  const progressBar = document.getElementById("progress-bar");
+  const hintEl = document.getElementById("hint");
+  const acertosCountEl = document.getElementById("acertos-count");
+  const errosCountEl = document.getElementById("erros-count");
+  const progressoAcertos = document.querySelector(".progresso-acertos");
+
+  function loadQuestion() {
+    selectedAnswer = null;
+    const q = questions[current];
+    questionEl.textContent = q.q;
+    optionsEl.innerHTML = "";
+    actionsEl.innerHTML = "";
+    hintEl.style.display = "none";
+
+    // Verifica se as opções são emojis ou texto/números
+    const isEmoji = typeof q.options[0] === 'string' && q.options[0].length === 1;
+    
+    if (isEmoji) {
+      // Cria opções como botões grandes para emojis
+      const container = document.createElement("div");
+      container.className = "pattern-options";
+      
+      q.options.forEach(option => {
+        const btn = document.createElement("div");
+        btn.className = "pattern-option";
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, option);
+        container.appendChild(btn);
+      });
+      
+      optionsEl.appendChild(container);
+    } else {
+      // Cria opções como botões normais para texto/números
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, option);
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    updateProgress();
+  }
+
+  function selectOption(btn, value) {
+    selectedAnswer = value;
+    
+    // Remove a seleção de todos os botões
+    if (btn.classList.contains("pattern-option")) {
+      document.querySelectorAll(".pattern-option").forEach(b => b.classList.remove("selected"));
+    } else {
+      document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+    }
+    
+    btn.classList.add("selected");
+
+    // Mostrar dica quando selecionar uma opção
+    hintEl.textContent = "Dica: " + questions[current].hint;
+    hintEl.style.display = "block";
+
+    showSendButton();
+  }
+
+  function showSendButton() {
+    actionsEl.innerHTML = "";
+    const send = document.createElement("button");
+    send.textContent = "Enviar resposta";
+    send.className = "action-btn";
+    send.onclick = checkAnswer;
+    actionsEl.appendChild(send);
+  }
+
+  function checkAnswer() {
+    const q = questions[current];
+    let buttons;
+    
+    if (typeof q.options[0] === 'string' && q.options[0].length === 1) {
+      buttons = document.querySelectorAll(".pattern-option");
+    } else {
+      buttons = document.querySelectorAll(".option-btn");
+    }
+
+    buttons.forEach(btn => {
+      btn.style.pointerEvents = "none"; // Desativa cliques
+      if (btn.textContent === selectedAnswer.toString()) {
+        if (selectedAnswer === q.answer || selectedAnswer.toString() === q.answer.toString()) {
+          btn.classList.add("correct");
+          score++;
+          acertosCount++;
+          acertosCountEl.textContent = acertosCount;
+        } else {
+          btn.classList.add("wrong");
+          wrongAnswers.push({ ...q });
+          errosCount++;
+          errosCountEl.textContent = errosCount;
+        }
+      }
+      if (btn.textContent === q.answer.toString()) {
+        btn.classList.add("correct");
+      }
+    });
+
+    // Atualizar barra de progresso
+    const percentAcertos = (acertosCount / (acertosCount + errosCount)) * 100;
+    progressoAcertos.style.width = percentAcertos + "%";
+
+    showNextButton();
+  }
+
+  function showNextButton() {
+    actionsEl.innerHTML = "";
+    const next = document.createElement("button");
+    next.textContent = "Próxima";
+    next.className = "action-btn";
+    next.onclick = () => {
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    };
+    actionsEl.appendChild(next);
+  }
+
+  function updateProgress() {
+    const percent = (current / questions.length) * 100;
+    progressBar.style.width = percent + "%";
+  }
+
+  function showResults() {
+    questionEl.textContent = `Resultado Final`;
+    optionsEl.innerHTML = `
+      <div class="results">
+        Você acertou ${score} de ${questions.length} questões!
+      </div>
+    `;
+    actionsEl.innerHTML = "";
+
+    if (wrongAnswers.length > 0) {
+      const reviewBtn = document.createElement("button");
+      reviewBtn.textContent = "Revisar erros";
+      reviewBtn.className = "action-btn";
+      reviewBtn.onclick = () => {
+        current = 0;
+        reviewIndex = 0;
+        showReviewQuestion();
+      };
+      actionsEl.appendChild(reviewBtn);
+    }
+
+    const homeBtn = document.createElement("button");
+    homeBtn.textContent = "Voltar ao Início";
+    homeBtn.className = "action-btn home-btn";
+    homeBtn.onclick = () => {
+      window.location.href = "../../index.html";
+    };
+    actionsEl.appendChild(homeBtn);
+  }
+
+  // Revisão de erros
+  let reviewIndex = 0;
+
+  function showReviewQuestion() {
+    if (reviewIndex < wrongAnswers.length) {
+      const q = wrongAnswers[reviewIndex];
+      questionEl.textContent = q.q;
+      optionsEl.innerHTML = "";
+      actionsEl.innerHTML = "";
+
+      const isEmoji = typeof q.options[0] === 'string' && q.options[0].length === 1;
+      
+      if (isEmoji) {
+        const container = document.createElement("div");
+        container.className = "pattern-options";
+        
+        q.options.forEach(option => {
+          const btn = document.createElement("div");
+          btn.className = "pattern-option";
+          btn.textContent = option;
+          btn.onclick = () => {
+            if (btn.classList.contains("pattern-option")) {
+              document.querySelectorAll(".pattern-option").forEach(b => b.classList.remove("selected"));
+            } else {
+              document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            }
+            btn.classList.add("selected");
+            selectedAnswer = option;
+            showReviewSendButton(q);
+          };
+          container.appendChild(btn);
+        });
+        
+        optionsEl.appendChild(container);
+      } else {
+        q.options.forEach(option => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = option;
+          btn.onclick = () => {
+            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+            selectedAnswer = option;
+            showReviewSendButton(q);
+          };
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      const hint = document.createElement("div");
+      hint.className = "hint";
+      hint.textContent = "Dica: " + q.hint;
+      optionsEl.appendChild(hint);
+    } else {
+      questionEl.textContent = "Revisão concluída!";
+      optionsEl.innerHTML = `
+        <div class="results">
+          Você revisou todos os erros!
+        </div>
+      `;
+      actionsEl.innerHTML = "";
+
+      const homeBtn = document.createElement("button");
+      homeBtn.textContent = "Voltar ao Início";
+      homeBtn.className = "action-btn home-btn";
+      homeBtn.onclick = () => {
+        window.location.href = "../../index.html";
+      };
+      actionsEl.appendChild(homeBtn);
+    }
+  }
+
+  function showReviewSendButton(q) {
+    actionsEl.innerHTML = "";
+    const send = document.createElement("button");
+    send.textContent = "Verificar";
+    send.className = "action-btn";
+    send.onclick = () => checkReviewAnswer(q);
+    actionsEl.appendChild(send);
+  }
+
+  function checkReviewAnswer(q) {
+    let buttons;
+    
+    if (typeof q.options[0] === 'string' && q.options[0].length === 1) {
+      buttons = document.querySelectorAll(".pattern-option");
+    } else {
+      buttons = document.querySelectorAll(".option-btn");
+    }
+
+    buttons.forEach(btn => {
+      btn.style.pointerEvents = "none";
+      if (btn.textContent === selectedAnswer.toString()) {
+        if (selectedAnswer === q.answer || selectedAnswer.toString() === q.answer.toString()) {
+          btn.classList.add("correct");
+        } else {
+          btn.classList.add("wrong");
+        }
+      }
+      if (btn.textContent === q.answer.toString()) {
+        btn.classList.add("correct");
+      }
+    });
+
+    const next = document.createElement("button");
+    next.textContent = "Próxima";
+    next.className = "action-btn";
+    next.onclick = () => {
+      reviewIndex++;
+      showReviewQuestion();
+    };
+    actionsEl.innerHTML = "";
+    actionsEl.appendChild(next);
+  }
+
+  loadQuestion();
+</script>
+
+</body>
+</html>
