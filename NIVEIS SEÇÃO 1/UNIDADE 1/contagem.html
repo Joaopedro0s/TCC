@@ -333,7 +333,7 @@
     { q: "Quantos lados tem um quadrado?", options: [4, 3, 5], answer: 4, hint: "Todos os lados são iguais!" },
     { q: "Quanto é 30 + 20?", options: [60, 50, 40], answer: 50, hint: "Trinta mais vinte." },
     { q: "Quantos olhos uma pessoa tem?", options: [2, 1, 3], answer: 2, hint: "Temos um par!" },
-    { q: "Qual número é maior: 99 ou 100?", options: [100, 98, 99], answer: 100, hint: "100 é o maior número de dois dígitos!" },
+    { q: "Qual número é maior: 99 ou 100?", options: [100, 98, 99], answer: 100, hint: "100 é o primeiro número de 3 digitos!" },
     { q: "Quantos minutos tem uma hora?", options: [60, 100, 90], answer: 60, hint: "Cada hora tem 60 minutos." }
   ];
 
@@ -485,6 +485,10 @@
       optionsEl.innerHTML = "";
       actionsEl.innerHTML = "";
 
+      // ATUALIZAÇÃO DA DICA: Define o texto da dica para a pergunta de revisão atual
+      hintEl.textContent = "Dica: " + q.hint;
+      hintEl.style.display = "block"; // Garante que a dica esteja visível
+
       q.options.forEach(option => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
@@ -498,10 +502,6 @@
         optionsEl.appendChild(btn);
       });
 
-      const hint = document.createElement("div");
-      hint.className = "hint";
-      hint.textContent = "Dica: " + q.hint;
-      optionsEl.appendChild(hint);
     } else {
       questionEl.textContent = "Revisão concluída!";
       optionsEl.innerHTML = `
@@ -510,6 +510,7 @@
         </div>
       `;
       actionsEl.innerHTML = "";
+      hintEl.style.display = "none"; // Esconde a dica quando a revisão termina
 
       const homeBtn = document.createElement("button");
       homeBtn.textContent = "Voltar ao Início";

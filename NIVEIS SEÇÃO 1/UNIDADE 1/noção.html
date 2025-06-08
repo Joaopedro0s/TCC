@@ -535,6 +535,10 @@
       optionsEl.innerHTML = "";
       actionsEl.innerHTML = "";
 
+      // ATUALIZAÇÃO DA DICA: Define o texto da dica para a pergunta de revisão atual
+      hintEl.textContent = "Dica: " + q.hint;
+      hintEl.style.display = "block"; // Garante que a dica esteja visível
+
       q.options.forEach(option => {
         const btn = document.createElement("button");
         btn.className = "option-btn";
@@ -548,10 +552,6 @@
         optionsEl.appendChild(btn);
       });
 
-      const hint = document.createElement("div");
-      hint.className = "hint";
-      hint.textContent = "Dica: " + q.hint;
-      optionsEl.appendChild(hint);
     } else {
       questionEl.textContent = "Revisão concluída!";
       optionsEl.innerHTML = `
@@ -560,6 +560,7 @@
         </div>
       `;
       actionsEl.innerHTML = "";
+      hintEl.style.display = "none"; // Esconde a dica quando a revisão termina
 
       const homeBtn = document.createElement("button");
       homeBtn.textContent = "Voltar ao Início";

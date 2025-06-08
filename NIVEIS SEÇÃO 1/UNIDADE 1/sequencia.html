@@ -605,49 +605,23 @@
       optionsEl.innerHTML = "";
       actionsEl.innerHTML = "";
 
-      const isEmoji = typeof q.options[0] === 'string' && q.options[0].length === 1;
-      
-      if (isEmoji) {
-        const container = document.createElement("div");
-        container.className = "pattern-options";
-        
-        q.options.forEach(option => {
-          const btn = document.createElement("div");
-          btn.className = "pattern-option";
-          btn.textContent = option;
-          btn.onclick = () => {
-            if (btn.classList.contains("pattern-option")) {
-              document.querySelectorAll(".pattern-option").forEach(b => b.classList.remove("selected"));
-            } else {
-              document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-            }
-            btn.classList.add("selected");
-            selectedAnswer = option;
-            showReviewSendButton(q);
-          };
-          container.appendChild(btn);
-        });
-        
-        optionsEl.appendChild(container);
-      } else {
-        q.options.forEach(option => {
-          const btn = document.createElement("button");
-          btn.className = "option-btn";
-          btn.textContent = option;
-          btn.onclick = () => {
-            document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
-            btn.classList.add("selected");
-            selectedAnswer = option;
-            showReviewSendButton(q);
-          };
-          optionsEl.appendChild(btn);
-        });
-      }
+      // ATUALIZAÇÃO DA DICA: Define o texto da dica para a pergunta de revisão atual
+      hintEl.textContent = "Dica: " + q.hint;
+      hintEl.style.display = "block"; // Garante que a dica esteja visível
 
-      const hint = document.createElement("div");
-      hint.className = "hint";
-      hint.textContent = "Dica: " + q.hint;
-      optionsEl.appendChild(hint);
+      q.options.forEach(option => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.textContent = option;
+        btn.onclick = () => {
+          document.querySelectorAll(".option-btn").forEach(b => b.classList.remove("selected"));
+          btn.classList.add("selected");
+          selectedAnswer = option;
+          showReviewSendButton(q);
+        };
+        optionsEl.appendChild(btn);
+      });
+
     } else {
       questionEl.textContent = "Revisão concluída!";
       optionsEl.innerHTML = `
@@ -656,6 +630,7 @@
         </div>
       `;
       actionsEl.innerHTML = "";
+      hintEl.style.display = "none"; // Esconde a dica quando a revisão termina
 
       const homeBtn = document.createElement("button");
       homeBtn.textContent = "Voltar ao Início";
