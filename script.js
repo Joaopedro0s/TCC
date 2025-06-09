@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentUser = null;
 
-    // ============== FUNÇÕES PRINCIPAIS ==============
     async function checkLoggedIn() {
         const userData = localStorage.getItem('currentUser');
         if (userData) {
