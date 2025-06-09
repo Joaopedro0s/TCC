@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrida da Adição na Floresta</title>
+  <style>
+    :root {
+      --primary-dark: #2c3e50;
+      --primary-blue: #3498db;
+      --accent-blue: #2980b9;
+      --accent-orange: #e67e22;
+      --light-gray: #f9f9f9;
+      --medium-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
+      --white: #ffffff;
+      --math-symbol: #f1c40f;
+      --fun-green: #2ecc71;
+      --fun-purple: #9b59b6;
+      --fun-red: #e74c3c;
+      --fun-yellow: #f39c12;
+      --forest-green: #27ae60;
+      --path-brown: #8b4513;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Comic Neue', cursive;
+      color: var(--dark-gray);
+      background-color: #e8f5e9;
+      line-height: 1.6;
+    }
+
+    /* Layout principal */
+    .game-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--forest-green);
+      border-right: 3px dashed var(--fun-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #palavra {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fun-yellow);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 4px dotted var(--fun-green);
+      transform: rotate(-3deg);
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      background-color: var(--accent-blue);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Conteúdo principal do jogo */
+    .game-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Container do jogo */
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border: 3px solid var(--fun-yellow);
+      position: relative;
+      overflow: hidden;
+      background-color: #e8f5e9;
+    }
+
+    #game-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    /* Trilha da corrida */
+    .race-track {
+      background-color: var(--path-brown);
+      height: 200px;
+      border-radius: 10px;
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+      border: 5px solid #5d4037;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    .race-track::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.5) 40px,
+        rgba(255,255,255,0.5) 80px
+      );
+    }
+
+    .race-track::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 40px,
+        rgba(255,255,255,0.5) 40px,
+        rgba(255,255,255,0.5) 80px
+      );
+    }
+
+    /* Casas numeradas na trilha */
+    .track-houses {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .house {
+      width: 40px;
+      height: 40px;
+      background-color: var(--white);
+      border: 2px solid var(--path-brown);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--path-brown);
+      position: relative;
+      z-index: 2;
+    }
+
+    .house::after {
+      content: "";
+      position: absolute;
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 15px;
+      background-color: var(--path-brown);
+    }
+
+    /* Personagens */
+    .character {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      bottom: 20px;
+      left: 10px;
+      transition: left 1s ease-in-out;
+      z-index: 3;
+    }
+
+    .character img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .character-1 {
+      bottom: 20px;
+    }
+
+    .character-2 {
+      bottom: 100px;
+    }
+
+    /* Área dos dados e da soma */
+    .dice-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 1rem 0;
+    }
+
+    .dice-container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .dice {
+      width: 80px;
+      height: 80px;
+      background-color: var(--white);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--fun-red);
+      cursor: pointer;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+      user-select: none;
+      border: 3px solid var(--fun-yellow);
+    }
+
+    .dice:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+    }
+
+    .dice:active {
+      transform: translateY(0);
+    }
+
+    .sum-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 1rem 0;
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-blue);
+    }
+
+    .sum-input {
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      text-align: center;
+      margin: 0 10px;
+      border: 3px solid var(--fun-yellow);
+      border-radius: 10px;
+      color: var(--primary-blue);
+    }
+
+    .sum-input:focus {
+      outline: none;
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 5px var(--accent-blue);
+    }
+
+    .check-btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1.2rem;
+      background-color: var(--fun-green);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Comic Sans MS', cursive;
+      transition: all 0.3s;
+      margin-top: 1rem;
+      font-weight: bold;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    .check-btn:hover {
+      background-color: #27ae60;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+    }
+
+    .check-btn:disabled {
+      background-color: var(--dark-gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Mensagens de feedback */
+    .feedback {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 1rem 0;
+      min-height: 40px;
+    }
+
+    .correct-feedback {
+      color: var(--fun-green);
+      animation: bounce 0.5s ease;
+    }
+
+    .wrong-feedback {
+      color: var(--fun-red);
+      animation: shake 0.5s ease;
+    }
+
+    /* Botão de reiniciar */
+    .restart-btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1.2rem;
+      background-color: var(--fun-purple);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Comic Sans MS', cursive;
+      transition: all 0.3s;
+      margin-top: 1rem;
+      font-weight: bold;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    .restart-btn:hover {
+      background-color: #8e44ad;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+    }
+
+    /* Barra direita */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-green);
+      border-left: 3px dotted var(--fun-yellow);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Estilos para a coluna esquerda */
+    .user-info {
+      margin-top: 1.5rem;
+      background-color: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      text-align: center;
+      border: 2px dashed white;
+    }
+
+    .user-avatar {
+      width: 70px;
+      height: 70px;
+      background-color: var(--fun-yellow);
+      color: var(--fun-purple);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 1.5rem;
+      border: 3px solid white;
+    }
+
+    .user-name {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      color: var(--white);
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .user-level {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-align: center;
+      margin-top: 0.3rem;
+      background-color: var(--fun-red);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .menu-navegacao {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    .menu-navegacao ul {
+      list-style-type: none;
+    }
+
+    .menu-navegacao li {
+      margin-bottom: 0.8rem;
+      padding: 0 1rem;
+    }
+
+    .menu-navegacao a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      background-color: rgba(255,255,255,0.1);
+      border-left: 4px solid transparent;
+    }
+
+    .menu-navegacao a span {
+      margin-right: 10px;
+      font-size: 1.3rem;
+    }
+
+    .menu-navegacao a:hover {
+      background-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      border-left: 4px solid var(--fun-yellow);
+      transform: translateX(5px);
+    }
+
+    .motivacional {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--white);
+      font-style: italic;
+      border-top: 2px dotted var(--fun-yellow);
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 0 0 0 15px;
+    }
+
+    .motivacional p:first-child {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--fun-yellow);
+    }
+
+    .motivacional p:last-child {
+      font-size: 0.8rem;
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .game-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 3px dashed var(--fun-yellow);
+      }
+      
+      .game-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 3px dotted var(--fun-yellow);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 1.5rem;
+      }
+      
+      .dice {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+      }
+      
+      .sum-input {
+        width: 50px;
+        height: 50px;
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Elementos decorativos */
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+    /* Elementos da floresta */
+    .tree {
+      position: absolute;
+      width: 40px;
+      height: 80px;
+      background-color: #8d6e63;
+      bottom: 0;
+      z-index: 1;
+    }
+
+    .tree::after {
+      content: "";
+      position: absolute;
+      bottom: 40px;
+      left: -20px;
+      width: 80px;
+      height: 60px;
+      background-color: #2e7d32;
+      border-radius: 50%;
+    }
+
+    .bush {
+      position: absolute;
+      width: 60px;
+      height: 40px;
+      background-color: #388e3c;
+      border-radius: 50%;
+      bottom: 0;
+      z-index: 1;
+    }
+
+    .flower {
+      position: absolute;
+      width: 20px;
+      height: 40px;
+      background-color: #81c784;
+      bottom: 0;
+      z-index: 1;
+    }
+
+    .flower::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -10px;
+      width: 40px;
+      height: 40px;
+      background-color: #ffeb3b;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-layout">
+  <aside class="esquerda">
+    <div id="palavra">Adição</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: 1º Ano</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você é incrível!</p>
+      <p>Continue somando!</p>
+    </div>
+  </aside>
+  
+  <main class="game-content">
+    <div id="game-container">
+      <h1 style="text-align: center; color: var(--forest-green); margin-bottom: 1rem;">Corrida da Adição na Floresta</h1>
+      <p style="text-align: center; margin-bottom: 1.5rem; color: var(--primary-blue);">Jogue os dados, some os números e ajude seu bichinho a chegar primeiro!</p>
+      
+      <!-- Trilha da corrida -->
+      <div class="race-track" id="race-track">
+        <!-- Personagens serão adicionados aqui pelo JavaScript -->
+        <!-- Elementos decorativos da floresta -->
+        <div class="tree" style="left: 50px;"></div>
+        <div class="tree" style="right: 100px;"></div>
+        <div class="bush" style="left: 150px;"></div>
+        <div class="bush" style="right: 200px;"></div>
+        <div class="flower" style="left: 250px;"></div>
+        <div class="flower" style="right: 300px;"></div>
+      </div>
+      
+      <!-- Casas numeradas -->
+      <div class="track-houses" id="track-houses">
+        <!-- As casas serão adicionadas aqui pelo JavaScript -->
+      </div>
+      
+      <!-- Área dos dados e da soma -->
+      <div class="dice-area">
+        <div class="dice-container">
+          <div class="dice" id="dice1">?</div>
+          <div class="dice" id="dice2">?</div>
+        </div>
+        
+        <div class="sum-area">
+          <span id="dice1-value">?</span>
+          <span style="margin: 0 5px; color: var(--math-symbol);">+</span>
+          <span id="dice2-value">?</span>
+          <span style="margin: 0 5px; color: var(--math-symbol);">=</span>
+          <input type="number" class="sum-input" id="sum-input" min="1" max="12" disabled>
+        </div>
+        
+        <button class="check-btn" id="check-btn" disabled>Verificar</button>
+        
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="user-info">
+      <h3 style="color: white; text-align: center; margin-bottom: 1rem;">Como Jogar</h3>
+      <ol style="color: white; padding-left: 1.5rem; font-size: 0.9rem;">
+        <li style="margin-bottom: 0.5rem;">Clique nos dois dados para jogá-los</li>
+        <li style="margin-bottom: 0.5rem;">Some os números que apareceram</li>
+        <li style="margin-bottom: 0.5rem;">Digite o resultado da soma</li>
+        <li style="margin-bottom: 0.5rem;">Clique em "Verificar"</li>
+        <li>Se acertar, seu bichinho avança!</li>
+      </ol>
+    </div>
+  </aside>
+</div>
+
+<script>
+  // Configuração do jogo
+  const totalHouses = 10; // Total de casas na trilha
+  const characters = [
+    { name: "Coelho", image: "🐰", position: 0 },
+    { name: "Tartaruga", image: "🐢", position: 0 }
+  ];
+  
+  // Elementos do DOM
+  const raceTrack = document.getElementById('race-track');
+  const trackHouses = document.getElementById('track-houses');
+  const dice1 = document.getElementById('dice1');
+  const dice2 = document.getElementById('dice2');
+  const dice1Value = document.getElementById('dice1-value');
+  const dice2Value = document.getElementById('dice2-value');
+  const sumInput = document.getElementById('sum-input');
+  const checkBtn = document.getElementById('check-btn');
+  const feedback = document.getElementById('feedback');
+  
+  // Variáveis do jogo
+  let currentDice1 = 0;
+  let currentDice2 = 0;
+  let currentPlayer = 0; // 0 = Coelho, 1 = Tartaruga
+  let gameActive = true;
+  
+  // Inicialização do jogo
+  function initGame() {
+    // Criar casas numeradas
+    for (let i = 0; i <= totalHouses; i++) {
+      const house = document.createElement('div');
+      house.className = 'house';
+      house.textContent = i;
+      trackHouses.appendChild(house);
+    }
+    
+    // Criar personagens
+    characters.forEach((char, index) => {
+      const charElement = document.createElement('div');
+      charElement.className = `character character-${index + 1}`;
+      charElement.id = `character-${index}`;
+      charElement.innerHTML = `<span style="font-size: 3rem;">${char.image}</span>`;
+      raceTrack.appendChild(charElement);
+      
+      // Posicionar personagem no início
+      updateCharacterPosition(index);
+    });
+    
+    // Event listeners
+    dice1.addEventListener('click', () => rollDice(0));
+    dice2.addEventListener('click', () => rollDice(1));
+    checkBtn.addEventListener('click', checkAnswer);
+    
+    // Ativar o primeiro dado
+    dice1.style.cursor = 'pointer';
+    dice1.style.backgroundColor = '#FFEB3B';
+  }
+  
+  // Rolar os dados
+  function rollDice(diceIndex) {
+    if (!gameActive) return;
+    
+    const diceValue = Math.floor(Math.random() * 4) + 1;    
+    if (diceIndex === 0) {
+      currentDice1 = diceValue;
+      dice1.textContent = diceValue;
+      dice1Value.textContent = diceValue;
+      dice1.style.cursor = 'default';
+      dice1.style.backgroundColor = '#ffffff';
+      
+      // Ativar o segundo dado
+      dice2.style.cursor = 'pointer';
+      dice2.style.backgroundColor = '#FFEB3B';
+    } else {
+      currentDice2 = diceValue;
+      dice2.textContent = diceValue;
+      dice2Value.textContent = diceValue;
+      dice2.style.cursor = 'default';
+      dice2.style.backgroundColor = '#ffffff';
+      
+      // Ativar o campo de entrada
+      sumInput.disabled = false;
+      sumInput.focus();
+      checkBtn.disabled = false;
+    }
+    
+    // Animação do dado
+    const diceElement = diceIndex === 0 ? dice1 : dice2;
+    diceElement.style.animation = 'pulse 0.3s';
+    setTimeout(() => {
+      diceElement.style.animation = '';
+    }, 300);
+  }
+  
+  // Verificar resposta
+  function checkAnswer() {
+    if (!gameActive) return;
+
+    const userAnswer = parseInt(sumInput.value);
+    const correctAnswer = currentDice1 + currentDice2;
+
+    if (isNaN(userAnswer)) {
+        feedback.textContent = "Digite um número!";
+        feedback.className = "feedback wrong-feedback";
+        return;
+    }
+
+    if (userAnswer === correctAnswer) {
+        // Resposta correta
+        feedback.textContent = "Correto! 🎉";
+        feedback.className = "feedback correct-feedback";
+
+        // Mover personagem
+        characters[currentPlayer].position += correctAnswer;
+        if (characters[currentPlayer].position > totalHouses) {
+            characters[currentPlayer].position = totalHouses;
+        }
+
+        updateCharacterPosition(currentPlayer);
+
+        // Verificar se ganhou
+        if (characters[currentPlayer].position >= totalHouses) {
+            gameActive = false;
+            const winnerIndex = currentPlayer; // Armazena o índice do vencedor ANTES de alternar
+            setTimeout(() => {
+                feedback.textContent = `${characters[winnerIndex].name} venceu! 🏆`; // Usa o índice armazenado
+                showRestartButton();
+            }, 1000);
+        }
+
+        // Alternar jogador SOMENTE SE o jogo ainda estiver ativo (ninguém venceu)
+        // ou se o jogo não estiver mais ativo (o jogador atual venceu e o turno não precisa ser resetado para o próximo)
+        if (gameActive) { // Adiciona esta condição para alternar apenas se o jogo não terminou
+             currentPlayer = (currentPlayer + 1) % characters.length;
+        }
+
+    } else {
+        // Resposta incorreta
+        feedback.textContent = `Ops! Tente novamente. ${currentDice1} + ${currentDice2} = ${correctAnswer}`;
+        feedback.className = "feedback wrong-feedback";
+    }
+
+    // Resetar para próxima jogada (se o jogo ainda estiver ativo ou se o jogo não terminou com vitória)
+    // Se o jogo terminou, não queremos resetar o turno imediatamente para mostrar a mensagem de vitória.
+    if (gameActive || (userAnswer !== correctAnswer)) {
+        setTimeout(() => {
+            resetTurn();
+        }, 1500);
+    }
+}
+  
+  // Atualizar posição do personagem
+  function updateCharacterPosition(playerIndex) {
+    const charElement = document.getElementById(`character-${playerIndex}`);
+    const trackWidth = raceTrack.offsetWidth - 70; // Ajuste para largura do personagem
+    const stepSize = trackWidth / totalHouses;
+    
+    const newPosition = stepSize * characters[playerIndex].position;
+    charElement.style.left = `${newPosition}px`;
+    
+    // Animação
+    charElement.style.transition = 'left 1s ease-in-out';
+  }
+  
+  // Resetar turno
+  function resetTurn() {
+    if (!gameActive) return;
+    
+    currentDice1 = 0;
+    currentDice2 = 0;
+    dice1.textContent = '?';
+    dice2.textContent = '?';
+    dice1Value.textContent = '?';
+    dice2Value.textContent = '?';
+    sumInput.value = '';
+    sumInput.disabled = true;
+    checkBtn.disabled = true;
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+    
+    // Ativar o primeiro dado novamente
+    dice1.style.cursor = 'pointer';
+    dice1.style.backgroundColor = '#FFEB3B';
+    dice2.style.cursor = 'default';
+    dice2.style.backgroundColor = '#ffffff';
+  }
+  
+  // Mostrar botão de reiniciar
+  function showRestartButton() {
+    const restartBtn = document.createElement('button');
+    restartBtn.className = 'restart-btn';
+    restartBtn.textContent = 'Jogar Novamente';
+    restartBtn.addEventListener('click', restartGame);
+    
+    const diceArea = document.querySelector('.dice-area');
+    diceArea.appendChild(restartBtn);
+  }
+  
+  // Reiniciar jogo
+  function restartGame() {
+    // Resetar posições
+    characters[0].position = 0;
+    characters[1].position = 0;
+    currentPlayer = 0;
+    gameActive = true;
+    
+    // Atualizar posições dos personagens
+    updateCharacterPosition(0);
+    updateCharacterPosition(1);
+    
+    // Resetar interface
+    resetTurn();
+    
+    // Remover botão de reiniciar
+    const restartBtn = document.querySelector('.restart-btn');
+    if (restartBtn) {
+      restartBtn.remove();
+    }
+    
+    feedback.textContent = '';
+  }
+  
+  // Iniciar o jogo quando a página carregar
+  window.addEventListener('DOMContentLoaded', initGame);
+</script>
+
+</body>
+</html>

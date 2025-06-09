@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pescaria dos Números</title>
+  <style>
+    :root {
+      --primary-dark: #2c3e50;
+      --primary-blue: #3498db;
+      --accent-blue: #2980b9;
+      --accent-orange: #e67e22;
+      --light-gray: #f9f9f9;
+      --medium-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
+      --white: #ffffff;
+      --math-symbol: #f1c40f;
+      --fun-green: #2ecc71;
+      --fun-purple: #9b59b6;
+      --fun-red: #e74c3c;
+      --fun-yellow: #f39c12;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Comic Neue', cursive;
+      color: var(--dark-gray);
+      background-color: #f0f8ff;
+      line-height: 1.6;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%);
+    }
+
+    /* Layout principal adaptado para o quiz */
+    .quiz-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda - Estilo Infantil */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-purple);
+      border-right: 3px dashed var(--fun-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #palavra {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fun-yellow);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 4px dotted var(--fun-green);
+      transform: rotate(-3deg);
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      background-color: var(--primary-blue);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Conteúdo principal do quiz - Estilo Infantil */
+    .quiz-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container do jogo de pescaria */
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border-top: 6px solid var(--primary-blue);
+      border: 3px solid var(--fun-yellow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #game-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    /* Lagoa */
+    .lake {
+      background-color: #87CEEB;
+      border-radius: 15px;
+      padding: 20px;
+      min-height: 300px;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--accent-blue);
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.3) 0%, transparent 20%);
+    }
+
+    /* Peixes */
+    .fish {
+      position: absolute;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s;
+      z-index: 10;
+    }
+
+    .fish:hover {
+      transform: scale(1.1);
+    }
+
+    .fish-number {
+      background-color: var(--fun-yellow);
+      color: var(--white);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border: 3px solid var(--white);
+    }
+
+    .fish-quantity {
+      background-color: var(--fun-green);
+      color: var(--white);
+      border-radius: 15px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border: 3px solid var(--white);
+    }
+
+    .quantity-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 100px;
+    }
+
+    .quantity-item {
+      font-size: 20px;
+      margin: 2px;
+    }
+
+    /* Pontuação e controles */
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: var(--medium-gray);
+      border-radius: 10px;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      color: var(--fun-purple);
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .game-btn {
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      font-family: 'Comic Sans MS', cursive;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--fun-yellow);
+      color: var(--primary-blue);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+    }
+
+    .game-btn:hover {
+      background-color: var(--accent-orange);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .game-btn.reset {
+      background-color: var(--fun-red);
+      color: white;
+    }
+
+    /* Mensagens */
+    .message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--fun-purple);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      display: none;
+      animation: bounce 0.5s;
+    }
+
+    /* Barra de progresso - Estilo Infantil */
+    #progress {
+      height: 20px;
+      background-color: rgba(255,255,255,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border: 2px solid var(--fun-yellow);
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--fun-green);
+      transition: width 0.5s ease;
+    }
+
+    /* Barra direita - Estilo Infantil */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-green);
+      border-left: 3px dotted var(--fun-yellow);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Progresso - Estilo Infantil */
+    .progresso-container {
+      width: 100%;
+      padding: 1rem;
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      border: 2px dashed white;
+    }
+
+    .progresso-container h3 {
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 1.3rem;
+      border-bottom: 3px dotted var(--fun-yellow);
+      padding-bottom: 0.5rem;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+
+    .unidade-progresso {
+      margin-bottom: 1.5rem;
+    }
+
+    .unidade-progresso h4 {
+      color: var(--white);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+
+    .progresso-bar {
+      height: 20px;
+      background-color: rgba(255,255,255,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 0.3rem;
+      border: 1px solid white;
+    }
+
+    .progresso-acertos {
+      background-color: var(--fun-yellow);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .progresso-legenda {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--white);
+    }
+
+    .acertos-dot, .erros-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .acertos-dot {
+      background-color: var(--fun-yellow);
+    }
+
+    .erros-dot {
+      background-color: var(--fun-red);
+    }
+
+    /* Estilos para a coluna esquerda - Infantil */
+    .user-info {
+      margin-top: 1.5rem;
+      background-color: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      text-align: center;
+      border: 2px dashed white;
+    }
+
+    .user-avatar {
+      width: 70px;
+      height: 70px;
+      background-color: var(--fun-yellow);
+      color: var(--fun-purple);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 1.5rem;
+      border: 3px solid white;
+    }
+
+    .user-name {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      color: var(--white);
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .user-level {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-align: center;
+      margin-top: 0.3rem;
+      background-color: var(--fun-red);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .menu-navegacao {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    .menu-navegacao ul {
+      list-style-type: none;
+    }
+
+    .menu-navegacao li {
+      margin-bottom: 0.8rem;
+      padding: 0 1rem;
+    }
+
+    .menu-navegacao a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      background-color: rgba(255,255,255,0.1);
+      border-left: 4px solid transparent;
+    }
+
+    .menu-navegacao a span {
+      margin-right: 10px;
+      font-size: 1.3rem;
+    }
+
+    .menu-navegacao a:hover {
+      background-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      border-left: 4px solid var(--fun-yellow);
+      transform: translateX(5px);
+    }
+
+    .motivacional {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--white);
+      font-style: italic;
+      border-top: 2px dotted var(--fun-yellow);
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 0 0 0 15px;
+    }
+
+    .motivacional p:first-child {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--fun-yellow);
+    }
+
+    .motivacional p:last-child {
+      font-size: 0.8rem;
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes fishSwim {
+      0% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-10px) rotate(-5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(10px) rotate(5deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    @keyframes splash {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .quiz-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 3px dashed var(--fun-yellow);
+      }
+      
+      .quiz-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 3px dotted var(--fun-yellow);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 1rem;
+      }
+      
+      .fish-number, .fish-quantity {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+    }
+
+    /* Elementos decorativos */
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    .direita::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-purple) 10px,
+        var(--fun-purple) 20px
+      );
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-layout">
+  <aside class="esquerda">
+    <div id="palavra">Pescaria</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: Iniciante</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você está indo bem!</p>
+      <p>Continue pescando</p>
+    </div>
+  </aside>
+  
+  <main class="quiz-content">
+    <div id="game-container">
+      <div id="progress">
+        <div id="progress-bar"></div>
+      </div>
+      
+      <div class="lake" id="lake">
+        <!-- Os peixes serão adicionados dinamicamente aqui -->
+      </div>
+      
+      <div class="game-info">
+        <div class="score">Pontos: <span id="score">0</span></div>
+        <div class="controls">
+          <button class="game-btn reset" id="reset-btn">Recomeçar</button>
+          <button class="game-btn" id="next-btn">Próxima Fase</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="progresso-container">
+      <h3>Seu Progresso</h3>
+      <div class="unidade-progresso">
+        <h4>Associação</h4>
+        <div class="progresso-bar">
+          <div class="progresso-acertos" style="width: 0%"></div>
+        </div>
+        <div class="progresso-legenda">
+          <span><span class="acertos-dot"></span> Acertos: <span id="acertos-count">0</span></span>
+          <span><span class="erros-dot"></span> Erros: <span id="erros-count">0</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- Mensagem flutuante -->
+<div class="message" id="message"></div>
+
+<script>
+  // Configurações do jogo
+  const gameConfig = {
+    levels: [
+      { pairs: 3, range: 5 },   // Nível 1: 3 pares, números de 1 a 5
+      { pairs: 4, range: 10 },  // Nível 2: 4 pares, números de 1 a 10
+      { pairs: 5, range: 15 },  // Nível 3: 5 pares, números de 1 a 15
+      { pairs: 6, range: 20 }   // Nível 4: 6 pares, números de 1 a 20
+    ]
+  };
+
+  // Estado do jogo
+  const gameState = {
+    currentLevel: 0,
+    score: 0,
+    correctPairs: 0,
+    totalPairs: 0,
+    selectedFish: null,
+    acertosCount: 0,
+    errosCount: 0,
+    fishPairs: []
+  };
+
+  // Elementos do DOM
+  const lakeEl = document.getElementById('lake');
+  const scoreEl = document.getElementById('score');
+  const resetBtn = document.getElementById('reset-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const messageEl = document.getElementById('message');
+  const progressBar = document.getElementById('progress-bar');
+  const acertosCountEl = document.getElementById('acertos-count');
+  const errosCountEl = document.getElementById('erros-count');
+  const progressoAcertos = document.querySelector('.progresso-acertos');
+
+  // Emojis para representar quantidades
+  const emojis = ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑', 
+                 '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥕', '🌽'];
+
+  // Inicializar o jogo
+  function initGame() {
+    gameState.currentLevel = 0;
+    gameState.score = 0;
+    gameState.acertosCount = 0;
+    gameState.errosCount = 0;
+    updateScore();
+    updateProgress();
+    loadLevel();
+  }
+
+  // Carregar nível
+  function loadLevel() {
+    // Limpar o lago
+    lakeEl.innerHTML = '';
+    gameState.correctPairs = 0;
+    gameState.selectedFish = null;
+    
+    const level = gameConfig.levels[gameState.currentLevel];
+    gameState.totalPairs = level.pairs;
+    
+    // Gerar pares de números e quantidades
+    gameState.fishPairs = generateFishPairs(level.pairs, level.range);
+    
+    // Criar peixes no lago
+    createFishes();
+    
+    // Atualizar progresso
+    updateProgress();
+    
+    // Esconder botão "Próxima Fase" se for o último nível
+    if (gameState.currentLevel === gameConfig.levels.length - 1) {
+      nextBtn.style.display = 'none';
+    } else {
+      nextBtn.style.display = 'block';
+    }
+  }
+
+  // Gerar pares de números e quantidades
+  function generateFishPairs(count, maxNumber) {
+    const pairs = [];
+    const numbers = [];
+    
+    // Gerar números únicos
+    while (numbers.length < count) {
+      const num = Math.floor(Math.random() * maxNumber) + 1;
+      if (!numbers.includes(num)) {
+        numbers.push(num);
+      }
+    }
+    
+    // Criar pares
+    for (const num of numbers) {
+      pairs.push({
+        number: num,
+        quantity: num,
+        matched: false
+      });
+    }
+    
+    return pairs;
+  }
+
+  // Criar peixes no lago
+  function createFishes() {
+    const lakeRect = lakeEl.getBoundingClientRect();
+    const lakeWidth = lakeRect.width - 100; // Margem para os peixes
+    const lakeHeight = lakeRect.height - 100;
+    
+    // Criar peixes com números
+    gameState.fishPairs.forEach((pair, index) => {
+      if (pair.matched) return;
+      
+      // Peixe com número
+      const numberFish = document.createElement('div');
+      numberFish.className = 'fish fish-number';
+      numberFish.textContent = pair.number;
+      numberFish.dataset.type = 'number';
+      numberFish.dataset.value = pair.number;
+      numberFish.dataset.index = index;
+      
+      // Posição aleatória
+      const left = Math.random() * lakeWidth;
+      const top = Math.random() * lakeHeight;
+      
+      numberFish.style.left = `${left}px`;
+      numberFish.style.top = `${top}px`;
+      
+      // Adicionar animação de nado
+      numberFish.style.animation = `fishSwim ${2 + Math.random() * 3}s infinite`;
+      
+      // Evento de clique
+      numberFish.addEventListener('click', handleFishClick);
+      
+      lakeEl.appendChild(numberFish);
+    });
+    
+    // Criar peixes com quantidades
+    gameState.fishPairs.forEach((pair, index) => {
+      if (pair.matched) return;
+      
+      // Peixe com quantidade
+      const quantityFish = document.createElement('div');
+      quantityFish.className = 'fish fish-quantity';
+      quantityFish.dataset.type = 'quantity';
+      quantityFish.dataset.value = pair.quantity;
+      quantityFish.dataset.index = index;
+      
+      // Criar elementos de quantidade
+      const quantityItems = document.createElement('div');
+      quantityItems.className = 'quantity-items';
+      
+      // Escolher um emoji aleatório para este par
+      const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+      
+      // Adicionar emojis de acordo com a quantidade
+      for (let i = 0; i < pair.quantity; i++) {
+        const item = document.createElement('span');
+        item.className = 'quantity-item';
+        item.textContent = emoji;
+        quantityItems.appendChild(item);
+      }
+      
+      quantityFish.appendChild(quantityItems);
+      
+      // Posição aleatória
+      const left = Math.random() * lakeWidth;
+      const top = Math.random() * lakeHeight;
+      
+      quantityFish.style.left = `${left}px`;
+      quantityFish.style.top = `${top}px`;
+      
+      // Adicionar animação de nado
+      quantityFish.style.animation = `fishSwim ${2 + Math.random() * 3}s infinite`;
+      
+      // Evento de clique
+      quantityFish.addEventListener('click', handleFishClick);
+      
+      lakeEl.appendChild(quantityFish);
+    });
+  }
+
+  // Manipulador de clique nos peixes
+  function handleFishClick(event) {
+    const fish = event.currentTarget;
+    const fishType = fish.dataset.type;
+    const fishValue = parseInt(fish.dataset.value);
+    const fishIndex = parseInt(fish.dataset.index);
+    
+    // Se não houver peixe selecionado, selecionar este
+    if (!gameState.selectedFish) {
+      gameState.selectedFish = { element: fish, type: fishType, value: fishValue, index: fishIndex };
+      fish.style.transform = 'scale(1.2)';
+      fish.style.boxShadow = '0 0 15px rgba(255,255,255,0.8)';
+      return;
+    }
+    
+    // Se clicou no mesmo peixe, deselecionar
+    if (gameState.selectedFish.element === fish) {
+      resetSelectedFish();
+      return;
+    }
+    
+    // Verificar se é um par válido
+    const isPairValid = (
+      gameState.selectedFish.type !== fishType && 
+      gameState.selectedFish.value === fishValue &&
+      gameState.selectedFish.index === fishIndex
+    );
+    
+    if (isPairValid) {
+      // Par correto
+      handleCorrectPair(gameState.selectedFish.element, fish);
+      gameState.fishPairs[fishIndex].matched = true;
+      gameState.correctPairs++;
+      gameState.score += 10 * (gameState.currentLevel + 1);
+      gameState.acertosCount++;
+      acertosCountEl.textContent = gameState.acertosCount;
+      
+      // Verificar se completou o nível
+      if (gameState.correctPairs === gameState.totalPairs) {
+        showMessage('Parabéns! Nível completo!');
+        gameState.score += 50 * (gameState.currentLevel + 1); // Bônus por completar o nível
+        updateScore();
+      }
+    } else {
+      // Par incorreto
+      handleWrongPair(gameState.selectedFish.element, fish);
+      gameState.errosCount++;
+      errosCountEl.textContent = gameState.errosCount;
+    }
+    
+    // Atualizar barra de progresso
+    const percentAcertos = (gameState.acertosCount / (gameState.acertosCount + gameState.errosCount)) * 100;
+    progressoAcertos.style.width = percentAcertos + '%';
+    
+    // Atualizar pontuação
+    updateScore();
+    resetSelectedFish();
+  }
+
+  // Manipular par correto
+  function handleCorrectPair(fish1, fish2) {
+    // Animação de desaparecimento
+    fish1.style.transition = 'all 0.5s';
+    fish2.style.transition = 'all 0.5s';
+    fish1.style.opacity = '0';
+    fish2.style.opacity = '0';
+    fish1.style.transform = 'scale(0)';
+    fish2.style.transform = 'scale(0)';
+    
+    // Criar efeito de splash
+    createSplashEffect(fish1);
+    createSplashEffect(fish2);
+    
+    // Remover peixes após a animação
+    setTimeout(() => {
+      lakeEl.removeChild(fish1);
+      lakeEl.removeChild(fish2);
+    }, 500);
+    
+    showMessage('Correto! +' + (10 * (gameState.currentLevel + 1)) + ' pontos');
+  }
+
+  // Manipular par incorreto
+  function handleWrongPair(fish1, fish2) {
+    // Animação de erro
+    fish1.style.animation = 'shake 0.5s';
+    fish2.style.animation = 'shake 0.5s';
+    
+    // Resetar animação após terminar
+    setTimeout(() => {
+      fish1.style.animation = `fishSwim ${2 + Math.random() * 3}s infinite`;
+      fish2.style.animation = `fishSwim ${2 + Math.random() * 3}s infinite`;
+    }, 500);
+    
+    showMessage('Tente novamente!');
+  }
+
+  // Criar efeito de splash
+  function createSplashEffect(fish) {
+    const rect = fish.getBoundingClientRect();
+    const splash = document.createElement('div');
+    splash.style.position = 'absolute';
+    splash.style.width = '50px';
+    splash.style.height = '50px';
+    splash.style.borderRadius = '50%';
+    splash.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+    splash.style.left = `${rect.left + rect.width/2 - 25}px`;
+    splash.style.top = `${rect.top + rect.height/2 - 25}px`;
+    splash.style.animation = 'splash 0.5s forwards';
+    
+    document.body.appendChild(splash);
+    
+    setTimeout(() => {
+      document.body.removeChild(splash);
+    }, 500);
+  }
+
+  // Resetar peixe selecionado
+  function resetSelectedFish() {
+    if (gameState.selectedFish) {
+      gameState.selectedFish.element.style.transform = '';
+      gameState.selectedFish.element.style.boxShadow = '';
+      gameState.selectedFish = null;
+    }
+  }
+
+  // Mostrar mensagem
+  function showMessage(text) {
+    messageEl.textContent = text;
+    messageEl.style.display = 'block';
+    
+    setTimeout(() => {
+      messageEl.style.display = 'none';
+    }, 1500);
+  }
+
+  // Atualizar pontuação
+  function updateScore() {
+    scoreEl.textContent = gameState.score;
+  }
+
+  // Atualizar barra de progresso
+  function updateProgress() {
+    const percent = (gameState.correctPairs / gameState.totalPairs) * 100;
+    progressBar.style.width = percent + '%';
+  }
+
+  // Event listeners
+  resetBtn.addEventListener('click', initGame);
+  
+  nextBtn.addEventListener('click', () => {
+    if (gameState.correctPairs === gameState.totalPairs) {
+      gameState.currentLevel++;
+      loadLevel();
+    } else {
+      showMessage('Complete todos os pares primeiro!');
+    }
+  });
+
+  // Iniciar o jogo
+  initGame();
+</script>
+
+</body>
+</html>

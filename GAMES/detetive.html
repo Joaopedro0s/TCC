@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detetive das Formas Escondidas</title>
+  <style>
+    :root {
+      --primary-dark: #2c3e50;
+      --primary-blue: #3498db;
+      --accent-blue: #2980b9;
+      --accent-orange: #e67e22;
+      --light-gray: #f9f9f9;
+      --medium-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
+      --white: #ffffff;
+      --math-symbol: #f1c40f;
+      --fun-green: #2ecc71;
+      --fun-purple: #9b59b6;
+      --fun-red: #e74c3c;
+      --fun-yellow: #f39c12;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Comic Neue', cursive;
+      color: var(--dark-gray);
+      background-color: #f0f8ff;
+      line-height: 1.6;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%);
+    }
+
+    /* Layout principal adaptado para o quiz */
+    .quiz-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda - Estilo Infantil */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-purple);
+      border-right: 3px dashed var(--fun-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #palavra {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fun-yellow);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 4px dotted var(--fun-green);
+      transform: rotate(-3deg);
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      background-color: var(--primary-blue);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Conteúdo principal do quiz - Estilo Infantil */
+    .quiz-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container do jogo */
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border-top: 6px solid var(--primary-blue);
+      border: 3px solid var(--fun-yellow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #game-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    /* Cena do jogo */
+    .scene {
+      background-color: #f9f9f9;
+      border-radius: 15px;
+      padding: 20px;
+      min-height: 300px;
+      position: relative;
+      overflow: hidden;
+      border: 3px solid var(--accent-blue);
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    /* Objetos na cena */
+    .shape-object {
+      position: absolute;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s, opacity 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: var(--white);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      z-index: 5; /* Ensure shapes are above background but below messages */
+    }
+
+    .shape-object:hover {
+      transform: scale(1.1);
+      z-index: 10;
+    }
+
+    /* Detetive */
+    .detective-panel {
+      background-color: var(--medium-gray);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      border: 2px solid var(--fun-yellow);
+    }
+
+    .detective-icon {
+      font-size: 40px;
+      margin-right: 15px;
+    }
+
+    .detective-text {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+    }
+
+    /* Pontuação e controles */
+    .game-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: var(--medium-gray);
+      border-radius: 10px;
+    }
+
+    .score {
+      font-size: 1.5rem;
+      color: var(--fun-purple);
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .game-btn {
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      font-family: 'Comic Sans MS', cursive;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--fun-yellow);
+      color: var(--primary-blue);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.1);
+    }
+
+    .game-btn:hover {
+      background-color: var(--accent-orange);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    .game-btn.reset {
+      background-color: var(--fun-red);
+      color: white;
+    }
+
+    /* Mensagens */
+    .message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: var(--fun-purple);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      z-index: 100;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      display: none;
+      animation: bounce 0.5s;
+    }
+
+    /* Barra de progresso - Estilo Infantil */
+    #progress {
+      height: 20px;
+      background-color: rgba(255,255,255,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+      border: 2px solid var(--fun-yellow);
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--fun-green);
+      transition: width 0.5s ease;
+    }
+
+    /* Barra direita - Estilo Infantil */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-green);
+      border-left: 3px dotted var(--fun-yellow);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Progresso - Estilo Infantil */
+    .progresso-container {
+      width: 100%;
+      padding: 1rem;
+      background-color: rgba(255,255,255,0.3);
+      border-radius: 15px;
+      margin-bottom: 1rem;
+      border: 2px dashed white;
+    }
+
+    .progresso-container h3 {
+      color: var(--white);
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 1.3rem;
+      border-bottom: 3px dotted var(--fun-yellow);
+      padding-bottom: 0.5rem;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+
+    .unidade-progresso {
+      margin-bottom: 1.5rem;
+    }
+
+    .unidade-progresso h4 {
+      color: var(--white);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+    }
+
+    .progresso-bar {
+      height: 20px;
+      background-color: rgba(255,255,255,0.5);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      margin-bottom: 0.3rem;
+      border: 1px solid white;
+    }
+
+    .progresso-acertos {
+      background-color: var(--fun-yellow);
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .progresso-legenda {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--white);
+    }
+
+    .acertos-dot, .erros-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+
+    .acertos-dot {
+      background-color: var(--fun-yellow);
+    }
+
+    .erros-dot {
+      background-color: var(--fun-red);
+    }
+
+    /* Estilos para a coluna esquerda - Infantil */
+    .user-info {
+      margin-top: 1.5rem;
+      background-color: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      text-align: center;
+      border: 2px dashed white;
+    }
+
+    .user-avatar {
+      width: 70px;
+      height: 70px;
+      background-color: var(--fun-yellow);
+      color: var(--fun-purple);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 1.5rem;
+      border: 3px solid white;
+    }
+
+    .user-name {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      color: var(--white);
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .user-level {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-align: center;
+      margin-top: 0.3rem;
+      background-color: var(--fun-red);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .menu-navegacao {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    .menu-navegacao ul {
+      list-style-type: none;
+    }
+
+    .menu-navegacao li {
+      margin-bottom: 0.8rem;
+      padding: 0 1rem;
+    }
+
+    .menu-navegacao a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      background-color: rgba(255,255,255,0.1);
+      border-left: 4px solid transparent;
+    }
+
+    .menu-navegacao a span {
+      margin-right: 10px;
+      font-size: 1.3rem;
+    }
+
+    .menu-navegacao a:hover {
+      background-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      border-left: 4px solid var(--fun-yellow);
+      transform: translateX(5px);
+    }
+
+    .motivacional {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--white);
+      font-style: italic;
+      border-top: 2px dotted var(--fun-yellow);
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 0 0 0 15px;
+    }
+
+    .motivacional p:first-child {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--fun-yellow);
+    }
+
+    .motivacional p:last-child {
+      font-size: 0.8rem;
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-5px); }
+      40%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    @keyframes celebrate {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 0; }
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .quiz-layout {
+        flex-direction: column;
+      }
+     
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 3px dashed var(--fun-yellow);
+      }
+     
+      .quiz-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+     
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 3px dotted var(--fun-yellow);
+      }
+    }
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 1rem;
+      }
+     
+      .detective-text {
+        font-size: 1rem;
+      }
+    }
+
+    /* Elementos decorativos */
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    .direita::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        -45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-purple) 10px,
+        var(--fun-purple) 20px
+      );
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-layout">
+  <aside class="esquerda">
+    <div id="palavra">Detetive</div>
+   
+    <div class="user-info">
+      <div class="user-avatar">D</div>
+      <div class="user-name">Detetive</div>
+      <div class="user-level">Nível: Iniciante</div>
+    </div>
+   
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+   
+    <div class="motivacional">
+      <p>Você é um ótimo detetive!</p>
+      <p>Continue encontrando formas</p>
+    </div>
+  </aside>
+ 
+  <main class="quiz-content">
+    <div id="game-container">
+      <div id="progress">
+        <div id="progress-bar"></div>
+      </div>
+     
+      <div class="detective-panel">
+        <div class="detective-icon">🕵️</div>
+        <div class="detective-text" id="mission-text">Encontre todos os círculos!</div>
+      </div>
+     
+      <div class="scene" id="scene">
+        </div>
+     
+      <div class="game-info">
+        <div class="score">Pontos: <span id="score">0</span></div>
+        <div class="controls">
+          <button class="game-btn reset" id="reset-btn">Recomeçar</button>
+          <button class="game-btn" id="next-btn">Próxima Fase</button>
+        </div>
+      </div>
+    </div>
+  </main>
+ 
+  <aside class="direita">
+    <div class="progresso-container">
+      <h3>Seu Progresso</h3>
+      <div class="unidade-progresso">
+        <h4>Formas Geométricas</h4>
+        <div class="progresso-bar">
+          <div class="progresso-acertos" style="width: 0%"></div>
+        </div>
+        <div class="progresso-legenda">
+          <span><span class="acertos-dot"></span> Acertos: <span id="acertos-count">0</span></span>
+          <span><span class="erros-dot"></span> Incorretas: <span id="erros-count">0</span></span>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<div class="message" id="message"></div>
+
+<script>
+  // Configurações do jogo
+  const gameConfig = {
+    levels: [
+      { 
+        id: 1,
+        shapesToFind: ['circle'], 
+        totalObjects: 7, // Total de objetos na cena (formas + distrações)
+        numTargetShapes: 3, // Quantidade de círculos a encontrar
+        background: 'room',
+        mission: "Encontre todos os círculos!"
+      },
+      { 
+        id: 2,
+        shapesToFind: ['square', 'circle'], 
+        totalObjects: 10,
+        numTargetShapes: 5, // Ex: 2 quadrados e 3 círculos
+        background: 'park',
+        mission: "Encontre todos os quadrados e círculos!"
+      },
+      { 
+        id: 3,
+        shapesToFind: ['triangle', 'square', 'circle'], 
+        totalObjects: 15,
+        numTargetShapes: 7, // Ex: 2 triângulos, 3 quadrados, 2 círculos
+        background: 'city',
+        mission: "Encontre triângulos, quadrados e círculos!"
+      },
+      { 
+        id: 4,
+        shapesToFind: ['rectangle', 'triangle', 'square', 'circle'], 
+        totalObjects: 20,
+        numTargetShapes: 10,
+        background: 'school',
+        mission: "Encontre todas as formas geométricas!"
+      }
+    ]
+  };
+
+  // Estado do jogo
+  const gameState = {
+    currentLevelIndex: 0,
+    score: 0,
+    foundShapesInLevel: 0, // Formas alvo encontradas no nível atual
+    totalTargetShapesInLevel: 0, // Total de formas alvo para encontrar no nível atual
+    acertosCount: 0, // Acertos totais no jogo
+    errosCount: 0,   // Erros totais no jogo
+    sceneObjects: [], // Array para armazenar os objetos na cena (incluindo se foram encontrados)
+    placedObjectsRects: [] // Armazena as dimensões e posições dos objetos já colocados para detecção de colisão
+  };
+
+  // Elementos do DOM
+  const sceneEl = document.getElementById('scene');
+  const scoreEl = document.getElementById('score');
+  const resetBtn = document.getElementById('reset-btn');
+  const nextBtn = document.getElementById('next-btn');
+  const messageEl = document.getElementById('message');
+  const progressBar = document.getElementById('progress-bar');
+  const acertosCountEl = document.getElementById('acertos-count');
+  const errosCountEl = document.getElementById('erros-count');
+  const progressoAcertos = document.querySelector('.progresso-acertos');
+  const missionTextEl = document.getElementById('mission-text');
+
+  // Cores para as formas
+  const shapeColors = {
+    circle: '#e74c3c',    // Vermelho
+    square: '#3498db',    // Azul
+    triangle: '#2ecc71',  // Verde
+    rectangle: '#f39c12', // Laranja
+  };
+
+  // Ícones para as distrações
+  const distractorIcons = {
+    cloud: '☁️',
+    heart: '❤️',
+    flower: '🌸',
+    star: '⭐',
+    moon: '🌙',
+    sun: '☀️'
+  };
+
+  // Inicializar o jogo
+  function initGame() {
+    gameState.currentLevelIndex = 0;
+    gameState.score = 0;
+    gameState.acertosCount = 0;
+    gameState.errosCount = 0;
+    updateScore();
+    updateOverallProgress(); // Atualiza a barra da direita
+    loadLevel();
+  }
+
+  // Carregar nível
+  function loadLevel() {
+    // Limpar a cena
+    sceneEl.innerHTML = '';
+    sceneEl.style.backgroundImage = '';
+    gameState.foundShapesInLevel = 0;
+    gameState.sceneObjects = [];
+    gameState.placedObjectsRects = []; // Limpa os retângulos para o novo nível
+   
+    const level = gameConfig.levels[gameState.currentLevelIndex];
+    missionTextEl.textContent = level.mission;
+    gameState.totalTargetShapesInLevel = level.numTargetShapes;
+   
+    // Definir fundo da cena
+    setSceneBackground(level.background);
+   
+    // Criar objetos na cena (formas alvo e distrações)
+    createSceneObjects(level);
+   
+    // Atualizar progresso do nível atual
+    updateLevelProgress();
+   
+    // Esconder/mostrar botão "Próxima Fase"
+    if (gameState.currentLevelIndex === gameConfig.levels.length - 1) {
+      nextBtn.style.display = 'none';
+    } else {
+      nextBtn.style.display = 'none'; // Esconde até o nível ser completo
+    }
+  }
+
+  // Definir fundo da cena
+  function setSceneBackground(backgroundType) {
+    let bgColor, bgImage;
+    
+    switch(backgroundType) {
+      case 'room':
+        bgColor = '#f5e6ca'; // Creme claro
+        bgImage = 'radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%)';
+        break;
+      case 'park':
+        bgColor = '#d4f1c5'; // Verde claro
+        bgImage = 'radial-gradient(circle at 90% 80%, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%)';
+        break;
+      case 'city':
+        bgColor = '#d4e6f1'; // Azul claro
+        bgImage = 'linear-gradient(to bottom, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%)';
+        break;
+      case 'school':
+        bgColor = '#f1d4e6'; // Rosa claro
+        bgImage = 'linear-gradient(to right, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%)';
+        break;
+      default:
+        bgColor = '#f9f9f9';
+    }
+    
+    sceneEl.style.backgroundColor = bgColor;
+    sceneEl.style.backgroundImage = bgImage;
+  }
+
+  // Helper para verificar se dois retângulos se sobrepõem
+  function rectanglesOverlap(rect1, rect2) {
+    return rect1.left < rect2.left + rect2.width &&
+           rect1.left + rect1.width > rect2.left &&
+           rect1.top < rect2.top + rect2.height &&
+           rect1.top + rect1.height > rect2.top;
+  }
+
+  // Helper para verificar colisão com objetos já posicionados
+  function checkCollision(newRect) {
+    for (const existingRect of gameState.placedObjectsRects) {
+      if (rectanglesOverlap(newRect, existingRect)) {
+        return true; // Colisão detectada
+      }
+    }
+    return false; // Nenhuma colisão
+  }
+
+  // Criar objetos na cena
+  function createSceneObjects(level) {
+    const sceneRect = sceneEl.getBoundingClientRect();
+    const sceneWidth = sceneRect.width;
+    const sceneHeight = sceneRect.height;
+    const padding = 15; // Espaçamento mínimo entre os objetos
+
+    // Calcular quantas distrações precisamos
+    const numDistractions = level.totalObjects - level.numTargetShapes;
+    const allObjectTypes = [];
+
+    // Adicionar as formas alvo
+    let shapesCount = 0;
+    while (shapesCount < level.numTargetShapes) {
+        const randomShapeType = level.shapesToFind[Math.floor(Math.random() * level.shapesToFind.length)];
+        allObjectTypes.push({ type: randomShapeType, isTarget: true });
+        shapesCount++;
+    }
+
+    // Adicionar as distrações
+    for (let i = 0; i < numDistractions; i++) {
+        const randomDistractorType = Object.keys(distractorIcons)[Math.floor(Math.random() * Object.keys(distractorIcons).length)];
+        allObjectTypes.push({ type: randomDistractorType, isTarget: false });
+    }
+
+    // Embaralhar a lista de todos os objetos para misturar formas e distrações
+    allObjectTypes.sort(() => Math.random() - 0.5);
+
+    allObjectTypes.forEach(objType => {
+      const shapeObj = document.createElement('div');
+      shapeObj.className = 'shape-object';
+      shapeObj.dataset.shape = objType.type;
+      shapeObj.dataset.isTarget = objType.isTarget; // Marcar se é uma forma alvo
+
+      let objWidth, objHeight;
+      const baseSize = 50 + Math.random() * 50; // Tamanho base aleatório para formas e ícones
+
+      // Determinar o tamanho antes de tentar posicionar
+      if (objType.type === 'rectangle') {
+        objWidth = 70 + Math.random() * 60;
+        objHeight = 40 + Math.random() * 30;
+      } else {
+        objWidth = baseSize;
+        objHeight = baseSize;
+      }
+
+      let attempts = 0;
+      const maxAttempts = 100; // Máximo de tentativas para encontrar uma posição sem colisão
+      let placed = false;
+
+      while (attempts < maxAttempts && !placed) {
+        const randomLeft = Math.random() * (sceneWidth - objWidth - padding * 2) + padding;
+        const randomTop = Math.random() * (sceneHeight - objHeight - padding * 2) + padding;
+
+        const newRect = {
+          left: randomLeft,
+          top: randomTop,
+          width: objWidth,
+          height: objHeight
+        };
+
+        if (!checkCollision(newRect)) {
+          // Posição encontrada!
+          shapeObj.style.left = `${randomLeft}px`;
+          shapeObj.style.top = `${randomTop}px`;
+          
+          // Aplicar estilos e texto/ícone
+          if (objType.isTarget) {
+            setShapeStyle(shapeObj, objType.type, objWidth, objHeight);
+          } else {
+            setDistractorStyle(shapeObj, objType.type, objWidth, objHeight);
+          }
+
+          shapeObj.style.animation = `pulse ${2 + Math.random() * 3}s infinite`; // Aplica animação
+          shapeObj.addEventListener('click', handleShapeClick);
+          sceneEl.appendChild(shapeObj);
+          
+          gameState.placedObjectsRects.push(newRect); // Armazena o retângulo do objeto
+          gameState.sceneObjects.push({
+            element: shapeObj,
+            shape: objType.type,
+            isTarget: objType.isTarget,
+            found: false
+          });
+          placed = true;
+        }
+        attempts++;
+      }
+
+      if (!placed) {
+        console.warn(`Não foi possível encontrar um lugar sem sobreposição para um objeto ${objType.type} após ${maxAttempts} tentativas. Pulando este objeto.`);
+      }
+    });
+  }
+
+  // Definir estilo da forma geométrica
+  function setShapeStyle(element, shape, width, height) {
+    element.style.width = `${width}px`;
+    element.style.height = `${height}px`;
+    element.style.backgroundColor = shapeColors[shape];
+    
+    switch(shape) {
+      case 'circle':
+        element.style.borderRadius = '50%';
+        element.textContent = '●';
+        break;
+      case 'square':
+        element.style.borderRadius = '5px';
+        element.textContent = '■';
+        break;
+      case 'triangle':
+        element.style.width = '0'; // A largura do div é zero
+        element.style.height = '0'; // A altura do div é zero
+        element.style.borderLeft = `${width / 2}px solid transparent`;
+        element.style.borderRight = `${width / 2}px solid transparent`;
+        element.style.borderBottom = `${height}px solid ${shapeColors[shape]}`;
+        element.style.backgroundColor = 'transparent'; // O fundo do div não é visível
+        element.textContent = '▲'; // Ícone para representação
+        element.style.fontSize = `${height * 0.7}px`; // Ajusta tamanho do ícone
+        element.style.lineHeight = `${height}px`;
+        break;
+      case 'rectangle':
+        element.style.borderRadius = '5px';
+        element.textContent = '▬';
+        break;
+      default:
+        element.style.borderRadius = '5px';
+    }
+  }
+
+  // Definir estilo do distrator
+  function setDistractorStyle(element, type, width, height) {
+    element.style.width = `${width}px`;
+    element.style.height = `${height}px`;
+    element.style.backgroundColor = 'transparent'; // Distrações geralmente são apenas ícones
+    element.style.fontSize = `${height * 0.8}px`; // Ajusta tamanho do ícone
+    element.style.color = '#7f8c8d'; // Cor padrão para ícones
+    
+    element.textContent = distractorIcons[type] || '?'; // Define o ícone ou '?'
+  }
+
+  // Manipulador de clique nas formas
+  function handleShapeClick(event) {
+    const shapeObjElement = event.currentTarget;
+    const isTarget = shapeObjElement.dataset.isTarget === 'true'; // Converte para booleano
+    
+    // Encontrar o objeto no estado do jogo
+    const objState = gameState.sceneObjects.find(obj => obj.element === shapeObjElement);
+    
+    if (objState.found) return; // Se já foi encontrado, ignorar
+    
+    if (isTarget) {
+      // Forma alvo correta encontrada
+      handleCorrectShape(shapeObjElement);
+      objState.found = true;
+      gameState.foundShapesInLevel++;
+      gameState.score += 10 * (gameState.currentLevelIndex + 1);
+      gameState.acertosCount++;
+      acertosCountEl.textContent = gameState.acertosCount;
+      
+      // Verificar se completou o nível
+      if (gameState.foundShapesInLevel === gameState.totalTargetShapesInLevel) {
+        showMessage('Parabéns! Nível completo!');
+        gameState.score += 50 * (gameState.currentLevelIndex + 1); // Bônus por completar o nível
+        updateScore();
+        if (gameState.currentLevelIndex < gameConfig.levels.length - 1) {
+          nextBtn.style.display = 'block'; // Mostra botão "Próxima Fase"
+        }
+      }
+    } else {
+      // Objeto incorreto (distração)
+      handleWrongShape(shapeObjElement);
+      gameState.errosCount++;
+      errosCountEl.textContent = gameState.errosCount;
+      gameState.score = Math.max(0, gameState.score - 5); // Deduz pontos por cliques incorretos
+    }
+    
+    updateScore();
+    updateLevelProgress(); // Atualiza barra de progresso do nível
+    updateOverallProgress(); // Atualiza barra de progresso geral
+  }
+
+  // Manipular forma correta
+  function handleCorrectShape(shapeElement) {
+    // Animação de celebração
+    shapeElement.style.animation = 'celebrate 0.5s forwards';
+    
+    // Criar efeito de confete
+    createConfettiEffect(shapeElement);
+    
+    // Remover após a animação
+    setTimeout(() => {
+      shapeElement.style.display = 'none';
+    }, 500);
+    
+    showMessage('Correto! +' + (10 * (gameState.currentLevelIndex + 1)) + ' pontos');
+  }
+
+  // Manipular forma incorreta
+  function handleWrongShape(shapeElement) {
+    // Animação de erro
+    shapeElement.style.animation = 'shake 0.5s';
+    
+    // Resetar animação após terminar
+    setTimeout(() => {
+      // Voltar a animação original, se houver
+      shapeElement.style.animation = `pulse ${2 + Math.random() * 3}s infinite`;
+    }, 500);
+    
+    showMessage('Essa não é a forma que procuramos!');
+  }
+
+  // Criar efeito de confete
+  function createConfettiEffect(shapeElement) {
+    const rect = shapeElement.getBoundingClientRect();
+    const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+    
+    for (let i = 0; i < 10; i++) {
+      const confetti = document.createElement('div');
+      confetti.style.position = 'absolute';
+      confetti.style.width = '10px';
+      confetti.style.height = '10px';
+      confetti.style.borderRadius = '50%';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.left = `${rect.left + rect.width/2 - 5}px`;
+      confetti.style.top = `${rect.top + rect.height/2 - 5}px`;
+      confetti.style.animation = `celebrate ${0.5 + Math.random()}s forwards`;
+      confetti.style.zIndex = '101'; // Acima da mensagem
+      
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => {
+        document.body.removeChild(confetti);
+      }, 500);
+    }
+  }
+
+  // Mostrar mensagem
+  function showMessage(text) {
+    messageEl.textContent = text;
+    messageEl.style.display = 'block';
+    
+    setTimeout(() => {
+      messageEl.style.display = 'none';
+    }, 1500);
+  }
+
+  // Atualizar pontuação
+  function updateScore() {
+    scoreEl.textContent = gameState.score;
+  }
+
+  // Atualizar barra de progresso do nível atual
+  function updateLevelProgress() {
+    const percent = (gameState.foundShapesInLevel / gameState.totalTargetShapesInLevel) * 100;
+    progressBar.style.width = percent + '%';
+  }
+
+  // Atualizar barra de progresso geral (acertos/erros)
+  function updateOverallProgress() {
+    const totalAttempts = gameState.acertosCount + gameState.errosCount;
+    if (totalAttempts > 0) {
+      const percentAcertos = (gameState.acertosCount / totalAttempts) * 100;
+      progressoAcertos.style.width = percentAcertos + '%';
+    } else {
+      progressoAcertos.style.width = '0%';
+    }
+  }
+
+  // Event listeners
+  resetBtn.addEventListener('click', initGame);
+ 
+  nextBtn.addEventListener('click', () => {
+    if (gameState.foundShapesInLevel === gameState.totalTargetShapesInLevel) {
+      gameState.currentLevelIndex++;
+      if (gameState.currentLevelIndex < gameConfig.levels.length) {
+        loadLevel();
+      } else {
+        showMessage('Parabéns! Você completou todos os níveis!');
+        nextBtn.style.display = 'none'; // Esconde o botão se todos os níveis foram concluídos
+      }
+    } else {
+      showMessage('Encontre todas as formas alvo antes de avançar!');
+    }
+  });
+
+  // Iniciar o jogo
+  initGame();
+</script>
+
+</body>
+</html>
