@@ -1,13 +1,17 @@
 :root {
-    --primary-dark: #0a192f;
-    --primary-blue: #1a365d;
-    --accent-blue: #3182ce;
-    --accent-orange: #dd6b20;
-    --light-gray: #f7fafc;
-    --medium-gray: #e2e8f0;
-    --dark-gray: #4a5568;
+    --primary-dark: #2c3e50;
+    --primary-blue: #3498db;
+    --accent-blue: #2980b9;
+    --accent-orange: #e67e22;
+    --light-gray: #f9f9f9;
+    --medium-gray: #ecf0f1;
+    --dark-gray: #7f8c8d;
     --white: #ffffff;
-    --math-symbol: wheat;
+    --math-symbol: #f1c40f;
+    --fun-green: #2ecc71;
+    --fun-purple: #9b59b6;
+    --fun-red: #e74c3c;
+    --fun-yellow: #f39c12;
 }
 
 /* Reset e configurações base */
@@ -19,74 +23,76 @@
 
 html, body {
     height: 100%;
-    font-family: 'Roboto Mono', monospace;
+    font-family: 'Comic Sans MS', 'Comic Neue', cursive;
     color: var(--dark-gray);
     background-color: var(--light-gray);
     line-height: 1.6;
-    overflow-x: hidden; /* Previne rolagem horizontal */
+    overflow-x: hidden;
 }
 
 /* Layout principal */
 .layout {
     display: flex;
     min-height: 100vh;
+    background-color: #f0f8ff;
 }
 
-/* Barra lateral esquerda FIXA */
+/* Barra lateral esquerda FIXA - Estilo Infantil */
 .esquerda {
     width: 15%;
     min-width: 180px;
-    background-color: var(--white);
-    border-right: 1px solid var(--medium-gray);
+    background-color: var(--fun-purple);
+    border-right: 3px dashed var(--fun-yellow);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding-top: 2rem;
-    position: fixed; /* Torna a barra fixa */
-    height: 100vh; /* Ocupa toda a altura da tela */
-    z-index: 100; /* Garante que fique acima de outros elementos */
-    box-shadow: 2px 0 5px rgba(0,0,0,0.02);
+    position: fixed;
+    height: 100vh;
+    z-index: 100;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
 }
 
 #palavra {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 700;
-    color: var(--primary-blue);
+    color: var(--fun-yellow);
     letter-spacing: -1px;
     padding: 0.5rem 1rem;
-    border-bottom: 3px solid var(--accent-orange);
-    transform: rotate(-2deg);
+    border-bottom: 4px dotted var(--fun-green);
+    transform: rotate(-3deg);
     text-align: center;
+    text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+    background-color: var(--primary-blue);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Ajuste para o conteúdo principal */
+/* Conteúdo principal - Estilo Infantil */
 .meio {
     flex: 1;
     padding: 2rem 3rem;
-    margin-left: 15%; /* Igual à largura da barra esquerda */
-    width: 70%; /* Mantém a proporção original */
+    margin-left: 15%;
+    width: 70%;
+    background-color: var(--light-gray);
+    background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%);
 }
 
-/* Barra de separação removida (não é mais necessária) */
-.barra-separacao {
-    display: none;
-}
-
-/* Ajuste para a barra direita */
+/* Barra direita - Estilo Infantil */
 .direita {
     width: 15%;
     min-width: 180px;
-    background-color: var(--white);
-    border-left: 1px solid var(--medium-gray);
+    background-color: var(--fun-green);
+    border-left: 3px dotted var(--fun-yellow);
     padding: 2rem 1rem;
     overflow-y: auto;
-    box-shadow: -2px 0 5px rgba(0,0,0,0.02);
+    box-shadow: -4px 0 10px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Restante do CSS permanece igual */
+/* Restante do CSS com estilo infantil */
 .conteudo-meio {
     max-width: 800px;
     margin: 0 auto;
@@ -97,20 +103,22 @@ html, body {
     color: var(--white);
     padding: 1.5rem 2rem;
     margin-bottom: 2rem;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
     transition: transform 0.2s ease;
+    border: 2px solid var(--fun-yellow);
 }
 
 .container:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px) scale(1.02);
 }
 
 #seção, #seção2 {
-    font-size: 1.3rem;
-    font-weight: 500;
+    font-size: 1.5rem;
+    font-weight: 700;
     position: relative;
     padding-bottom: 0.5rem;
+    color: var(--fun-red);
 }
 
 #seção:after, #seção2:after {
@@ -119,109 +127,459 @@ html, body {
     bottom: 0;
     left: 0;
     width: 60px;
-    height: 3px;
-    background-color: var(--accent-orange);
+    height: 4px;
+    background-color: var(--fun-yellow);
+    border-radius: 2px;
 }
 
 .primeira-secao {
-    margin-top: 0; /* Ajustado para layout fixo */
+    margin-top: 0;
 }
 
 .math-operations {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1.2rem;
+    gap: 1.5rem;
     margin: 2.5rem 0;
 }
 
 .math-card {
     background: var(--white);
-    border-radius: 8px;
-    padding: 1.2rem;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     transition: all 0.3s ease;
     cursor: pointer;
     text-align: center;
-    border-top: 4px solid var(--primary-blue);
+    border-top: 6px solid var(--primary-blue);
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 2px solid var(--medium-gray);
 }
 
 .math-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-8px) rotate(2deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     border-top-color: var(--accent-orange);
 }
 
 .math-icon {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     background-color: var(--light-gray);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
-    font-size: 1.8rem;
+    font-size: 2rem;
     color: var(--primary-blue);
     transition: all 0.3s ease;
+    border: 3px solid var(--fun-yellow);
 }
 
 .math-card:hover .math-icon {
     background-color: var(--primary-blue);
     color: var(--white);
+    transform: scale(1.1);
 }
 
 .math-title {
-    font-weight: 600;
+    font-weight: 700;
     color: var(--primary-blue);
-    margin-bottom: 0.3rem;
-    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
 }
 
 .math-desc {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
     color: var(--dark-gray);
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
-/* Cores Temáticas por Categoria */
-.addition-card { border-top-color: #4299e1; }
-.addition-card .math-icon { background-color: #ebf8ff; color: #3182ce; }
+/* Cores Temáticas por Categoria - Versão Infantil */
+.addition-card { border-top-color: #3498db; }
+.addition-card .math-icon { background-color: #e3f2fd; color: #1e88e5; }
 
-.subtraction-card { border-top-color: #9f7aea; }
-.subtraction-card .math-icon { background-color: #faf5ff; color: #805ad5; }
+.subtraction-card { border-top-color: #9b59b6; }
+.subtraction-card .math-icon { background-color: #f3e5f5; color: #8e44ad; }
 
-.multiplication-card { border-top-color: #f687b3; }
-.multiplication-card .math-icon { background-color: #fff5f7; color: #ed64a6; }
+.multiplication-card { border-top-color: #e74c3c; }
+.multiplication-card .math-icon { background-color: #ffebee; color: #e53935; }
 
-.geometry-card { border-top-color: #68d391; }
-.geometry-card .math-icon { background-color: #f0fff4; color: #48bb78; }
+.geometry-card { border-top-color: #2ecc71; }
+.geometry-card .math-icon { background-color: #e8f5e9; color: #27ae60; }
 
-.number-card { border-top-color: #f6ad55; }
-.number-card .math-icon { background-color: #fffaf0; color: #ed8936; }
+.number-card { border-top-color: #f39c12; }
+.number-card .math-icon { background-color: #fff8e1; color: #f57c00; }
 
-.measure-card { border-top-color: #667eea; }
-.measure-card .math-icon { background-color: #ebf4ff; color: #5a67d8; }
+.measure-card { border-top-color: #1abc9c; }
+.measure-card .math-icon { background-color: #e0f7fa; color: #00acc1; }
 
-.problem-card { border-top-color: #f56565; }
-.problem-card .math-icon { background-color: #fff5f5; color: #fc8181; }
+.problem-card { border-top-color: #e67e22; }
+.problem-card .math-icon { background-color: #fff3e0; color: #fb8c00; }
 
 .direita p {
-    font-size: 0.9rem;
-    color: var(--dark-gray);
+    font-size: 1rem;
+    color: var(--white);
     text-align: center;
     padding: 1rem;
-    background-color: var(--light-gray);
-    border-radius: 4px;
+    background-color: rgba(255,255,255,0.2);
+    border-radius: 10px;
     width: 100%;
+    margin-bottom: 1rem;
+    border: 1px dashed white;
 }
 
 .math-symbol {
-    font-family: 'Roboto Mono', monospace;
+    font-family: 'Comic Sans MS', cursive;
     color: var(--math-symbol);
     font-weight: 700;
+    font-size: 1.2em;
+}
+
+/* Progresso - Estilo Infantil */
+.progresso-container {
+    width: 100%;
+    padding: 1rem;
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 15px;
+    margin-bottom: 1rem;
+}
+
+.progresso-container h3 {
+    color: var(--white);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+    border-bottom: 3px dotted var(--fun-yellow);
+    padding-bottom: 0.5rem;
+}
+
+.unidade-progresso {
+    margin-bottom: 1.5rem;
+}
+
+.unidade-progresso h4 {
+    color: var(--white);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+}
+
+.progresso-bar {
+    height: 20px;
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    margin-bottom: 0.3rem;
+    border: 1px solid white;
+}
+
+.progresso-acertos {
+    background-color: var(--fun-green);
+    height: 100%;
+}
+
+.progresso-erros {
+    background-color: var(--fun-red);
+    height: 100%;
+}
+
+.progresso-legenda {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--white);
+}
+
+.acertos-dot, .erros-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.acertos-dot {
+    background-color: var(--fun-green);
+}
+
+.erros-dot {
+    background-color: var(--fun-red);
+}
+
+.proximos-desafios {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 2px dotted var(--fun-yellow);
+}
+
+.proximos-desafios h4 {
+    color: var(--white);
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.proximos-desafios ul {
+    list-style-type: none;
+}
+
+.proximos-desafios li {
+    padding: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--white);
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.proximos-desafios li:before {
+    content: "🌟";
+    position: absolute;
+    left: 0;
+    color: var(--fun-yellow);
+}
+
+/* Estilos para a coluna esquerda - Infantil */
+.logo-container {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 2px dotted var(--fun-yellow);
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.user-info {
+    margin-top: 1.5rem;
+    background-color: rgba(255,255,255,0.2);
+    padding: 1rem;
+    border-radius: 15px;
+    width: 90%;
+    text-align: center;
+    border: 2px dashed white;
+}
+
+.user-avatar {
+    width: 70px;
+    height: 70px;
+    background-color: var(--fun-yellow);
+    color: var(--fun-purple);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border: 3px solid white;
+}
+
+.user-name {
+    font-weight: 700;
+    margin-top: 0.5rem;
+    color: var(--white);
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.user-level {
+    font-size: 0.9rem;
+    color: var(--white);
+    text-align: center;
+    margin-top: 0.3rem;
+    background-color: var(--fun-red);
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.menu-navegacao {
+    margin: 2rem 0;
+    width: 100%;
+}
+
+.menu-navegacao ul {
+    list-style-type: none;
+}
+
+.menu-navegacao li {
+    margin-bottom: 0.8rem;
+    padding: 0 1rem;
+}
+
+.menu-navegacao a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    background-color: rgba(255,255,255,0.1);
+    border-left: 4px solid transparent;
+}
+
+.menu-navegacao a span {
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.menu-navegacao a:hover {
+    background-color: rgba(255,255,255,0.3);
+    color: var(--white);
+    border-left: 4px solid var(--fun-yellow);
+    transform: translateX(5px);
+}
+
+.menu-navegacao .active a {
+    background-color: var(--fun-yellow);
+    color: var(--fun-purple);
+    font-weight: bold;
+}
+
+.motivacional {
+    margin-top: auto;
+    padding: 1rem;
+    font-size: 0.95rem;
+    text-align: center;
+    color: var(--white);
+    font-style: italic;
+    border-top: 2px dotted var(--fun-yellow);
+    width: 100%;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 0 0 0 15px;
+}
+
+.motivacional p:first-child {
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    color: var(--fun-yellow);
+}
+
+.motivacional p:last-child {
+    font-size: 0.8rem;
+}
+
+/* Modal Styles - Infantil */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(46, 204, 113, 0.8);
+}
+
+.modal-content {
+    background-color: var(--primary-blue);
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: relative;
+    border: 4px solid var(--fun-yellow);
+    color: white;
+}
+
+.close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--white);
+    background-color: var(--fun-red);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--white);
+    font-size: 1.1rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid var(--fun-yellow);
+    border-radius: 10px;
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 1rem;
+    background-color: rgba(255,255,255,0.9);
+}
+
+.login-btn, .register-btn {
+    background-color: var(--fun-yellow);
+    color: var(--primary-blue);
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-family: 'Comic Sans MS', cursive;
+    font-weight: 700;
+    margin-top: 1rem;
+    transition: all 0.3s;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.login-btn:hover, .register-btn:hover {
+    background-color: #f1c40f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+}
+
+.register-link a {
+    color: var(--fun-yellow);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#logoutBtn {
+    background-color: var(--fun-red);
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Comic Sans MS', cursive;
+    margin-top: 1rem;
+    width: 100%;
+    transition: background-color 0.3s;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+#logoutBtn:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.1);
 }
 
 /* Responsividade */
@@ -229,32 +587,32 @@ html, body {
     .layout {
         flex-direction: column;
     }
-    
+   
     .esquerda {
         position: relative;
         width: 100%;
         height: auto;
         padding: 1rem;
         border-right: none;
-        border-bottom: 1px solid var(--medium-gray);
+        border-bottom: 3px dashed var(--fun-yellow);
     }
-    
+   
     .meio {
         margin-left: 0;
         width: 100%;
         padding: 1.5rem;
         order: 2;
     }
-    
+   
     .direita {
         width: 100%;
         order: 3;
         border-left: none;
-        border-top: 1px solid var(--medium-gray);
+        border-top: 3px dotted var(--fun-yellow);
     }
-    
+   
     #palavra {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
         transform: none;
     }
 }
@@ -269,300 +627,57 @@ html, body {
     .math-operations {
         grid-template-columns: 1fr;
     }
-}
-/* Estilos para a barra de progresso */
-.progresso-container {
-    width: 100%;
-    padding: 1rem;
-}
-
-.progresso-container h3 {
-    color: var(--primary-blue);
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-size: 1.2rem;
-    border-bottom: 2px solid var(--accent-orange);
-    padding-bottom: 0.5rem;
-}
-
-.unidade-progresso {
-    margin-bottom: 1.5rem;
-}
-
-.unidade-progresso h4 {
-    color: var(--dark-gray);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-
-.progresso-bar {
-    height: 20px;
-    background-color: var(--medium-gray);
-    border-radius: 10px;
-    overflow: hidden;
-    display: flex;
-    margin-bottom: 0.3rem;
-}
-
-.progresso-acertos {
-    background-color: #48bb78; /* Verde para acertos */
-    height: 100%;
-}
-
-.progresso-erros {
-    background-color: #f56565; /* Vermelho para erros */
-    height: 100%;
-}
-
-.progresso-legenda {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: var(--dark-gray);
-}
-
-.acertos-dot, .erros-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin-right: 5px;
-}
-
-.acertos-dot {
-    background-color: #48bb78;
-}
-
-.erros-dot {
-    background-color: #f56565;
-}
-
-.proximos-desafios {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px dashed var(--medium-gray);
-}
-
-.proximos-desafios h4 {
-    color: var(--primary-blue);
-    font-size: 1rem;
-    margin-bottom: 0.8rem;
-}
-
-.proximos-desafios ul {
-    list-style-type: none;
-}
-
-.proximos-desafios li {
-    padding: 0.3rem 0;
-    font-size: 0.85rem;
-    color: var(--dark-gray);
-    position: relative;
-    padding-left: 1.2rem;
-}
-
-.proximos-desafios li:before {
-    content: "→";
-    position: absolute;
-    left: 0;
-    color: var(--accent-orange);
-}
-
-/* Estilos para a coluna esquerda */
-.logo-container {
-    text-align: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--medium-gray);
-    margin-bottom: 1rem;
-}
-
-.user-info {
-    margin-top: 1.5rem;
-}
-
-.user-avatar {
-    width: 60px;
-    height: 60px;
-    background-color: var(--primary-blue);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.user-name {
-    font-weight: 600;
-    margin-top: 0.5rem;
-    color: var(--primary-blue);
-    text-align: center;
-}
-
-.user-level {
-    font-size: 0.8rem;
-    color: var(--dark-gray);
-    text-align: center;
-    margin-top: 0.2rem;
-}
-
-.menu-navegacao {
-    margin: 2rem 0;
-}
-
-.menu-navegacao ul {
-    list-style-type: none;
-}
-
-.menu-navegacao li {
-    margin-bottom: 0.8rem;
-}
-
-.menu-navegacao a {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-    color: var(--dark-gray);
-    text-decoration: none;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.menu-navegacao a span {
-    margin-right: 10px;
-    font-size: 1.1rem;
-}
-
-.menu-navegacao a:hover {
-    background-color: var(--light-gray);
-    color: var(--primary-blue);
-}
-
-.menu-navegacao .active a {
-    background-color: var(--primary-blue);
-    color: white;
-}
-
-.motivacional {
-    margin-top: auto;
-    padding: 1rem;
-    font-size: 0.85rem;
-    text-align: center;
-    color: var(--dark-gray);
-    font-style: italic;
-    border-top: 1px solid var(--medium-gray);
-}
-
-.motivacional p:first-child {
-    font-weight: 500;
-    margin-bottom: 0.3rem;
-}
-
-.motivacional p:last-child {
-    font-size: 0.75rem;
-}
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-}
-
-.modal-content {
-    background-color: var(--white);
-    margin: 10% auto;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    position: relative;
-}
-
-.close {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--dark-gray);
-}
-
-.form-group {
-    margin-bottom: 1rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--dark-gray);
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--medium-gray);
-    border-radius: 4px;
-    font-family: 'Roboto Mono', monospace;
-}
-
-.login-btn, .register-btn {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0.7rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    font-family: 'Roboto Mono', monospace;
-    font-weight: 500;
-    margin-top: 1rem;
-    transition: background-color 0.3s;
-}
-
-.login-btn:hover, .register-btn:hover {
-    background-color: var(--accent-blue);
-}
-
-.register-link {
-    text-align: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-.register-link a {
-    color: var(--primary-blue);
-    text-decoration: none;
-}
-
-#logoutBtn {
-    background-color: var(--accent-orange);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Roboto Mono', monospace;
-    margin-top: 0.5rem;
-    width: 100%;
-    transition: background-color 0.3s;
-}
-
-#logoutBtn:hover {
-    background-color: #c05621;
-}
-
-/* Responsividade para modais */
-@media (max-width: 480px) {
+    
     .modal-content {
         margin: 20% auto;
         width: 85%;
+        padding: 1.5rem;
     }
+    
+    #seção, #seção2 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Animations */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.math-card:hover {
+    animation: bounce 0.5s ease;
+}
+
+/* Elementos decorativos infantis */
+.esquerda::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+    );
+}
+
+.direita::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-purple) 10px,
+        var(--fun-purple) 20px
+    );
 }
