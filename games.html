@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minijogos Matemáticos - 1º Ano</title>
+  <style>
+    :root {
+      --primary-dark: #2c3e50;
+      --primary-blue: #3498db;
+      --accent-blue: #2980b9;
+      --accent-orange: #e67e22;
+      --light-gray: #f9f9f9;
+      --medium-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
+      --white: #ffffff;
+      --math-symbol: #f1c40f;
+      --fun-green: #2ecc71;
+      --fun-purple: #9b59b6;
+      --fun-red: #e74c3c;
+      --fun-yellow: #f39c12;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Comic Neue', cursive;
+      color: var(--dark-gray);
+      background-color: #f0f8ff;
+      line-height: 1.6;
+      background-image: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%);
+    }
+
+    /* Layout principal */
+    .games-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda - Estilo Infantil */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-purple);
+      border-right: 3px dashed var(--fun-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #palavra {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fun-yellow);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 4px dotted var(--fun-green);
+      transform: rotate(-3deg);
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      background-color: var(--primary-blue);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Conteúdo principal - Estilo Infantil */
+    .games-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Título da página */
+    .page-title {
+      color: var(--fun-purple);
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    .page-title:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 5px;
+      background-color: var(--fun-yellow);
+      border-radius: 3px;
+    }
+
+    /* Container dos jogos */
+    .games-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    /* Cartão de jogo */
+    .game-card {
+      background: var(--white);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border: 3px solid var(--fun-yellow);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .game-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+      border-color: var(--fun-green);
+    }
+
+    .game-image {
+      height: 150px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .game-image::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    .game-info {
+      padding: 1.5rem;
+    }
+
+    .game-title {
+      font-size: 1.4rem;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+
+    .game-description {
+      font-size: 1rem;
+      color: var(--dark-gray);
+      margin-bottom: 1rem;
+    }
+
+    .game-difficulty {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background-color: var(--light-gray);
+      color: var(--primary-blue);
+    }
+
+    .game-difficulty.easy {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .game-difficulty.medium {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    /* Barra direita - Estilo Infantil */
+    .direita {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--fun-green);
+      border-left: 3px dotted var(--fun-yellow);
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Estilos para a coluna esquerda - Infantil */
+    .user-info {
+      margin-top: 1.5rem;
+      background-color: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      text-align: center;
+      border: 2px dashed white;
+    }
+
+    .user-avatar {
+      width: 70px;
+      height: 70px;
+      background-color: var(--fun-yellow);
+      color: var(--fun-purple);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 1.5rem;
+      border: 3px solid white;
+    }
+
+    .user-name {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      color: var(--white);
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .user-level {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-align: center;
+      margin-top: 0.3rem;
+      background-color: var(--fun-red);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .menu-navegacao {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    .menu-navegacao ul {
+      list-style-type: none;
+    }
+
+    .menu-navegacao li {
+      margin-bottom: 0.8rem;
+      padding: 0 1rem;
+    }
+
+    .menu-navegacao a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      background-color: rgba(255,255,255,0.1);
+      border-left: 4px solid transparent;
+    }
+
+    .menu-navegacao a span {
+      margin-right: 10px;
+      font-size: 1.3rem;
+    }
+
+    .menu-navegacao a:hover {
+      background-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      border-left: 4px solid var(--fun-yellow);
+      transform: translateX(5px);
+    }
+
+    .motivacional {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--white);
+      font-style: italic;
+      border-top: 2px dotted var(--fun-yellow);
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 0 0 0 15px;
+    }
+
+    .motivacional p:first-child {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--fun-yellow);
+    }
+
+    .motivacional p:last-child {
+      font-size: 0.8rem;
+    }
+
+    /* Elementos decorativos */
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .games-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 3px dashed var(--fun-yellow);
+      }
+      
+      .games-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+      
+      .direita {
+        width: 100%;
+        border-left: none;
+        border-top: 3px dotted var(--fun-yellow);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .games-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .page-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="games-layout">
+  <aside class="esquerda">
+    <div id="palavra">Matemática</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: 1º Ano</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>🎮</span> Todos os Jogos</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul> 
+    </nav>
+    
+    <div class="motivacional">
+      <p>Vamos aprender brincando!</p>
+      <p>Escolha um jogo para começar</p>
+    </div>
+  </aside>
+  
+  <main class="games-content">
+    <h1 class="page-title">Minijogos Matemáticos</h1>
+    <p style="text-align: center; margin-bottom: 2rem; font-size: 1.2rem; color: var(--primary-blue);">Divirta-se aprendendo matemática com esses jogos incríveis!</p>
+    
+    <div class="games-container">
+      <!-- Jogo 1: Contagem de Objetos -->
+      <a href="GAMES/memória.html" class="game-card">
+        <div class="game-image" style="background-color: #FFD166; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+            🧠
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Jogo da Memória</h3>
+          <p class="game-description">Vire cartas viradas para baixo e encontre pares idênticos, testando sua memória.
+          </p>
+          <span class="game-difficulty easy">Fácil</span>
+        </div>
+      </a>
+      
+      <!-- Jogo 2: Adição Básica -->
+      <a href="adicao-basica.html" class="game-card">
+        <div class="game-image" style="background-color: #06D6A0; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+          ➕
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Adição Básica</h3>
+          <p class="game-description">Resolva problemas simples de adição com ajuda de imagens divertidas.</p>
+          <span class="game-difficulty easy">Fácil</span>
+        </div>
+      </a>
+      
+      <!-- Jogo 3: Subtração Simples -->
+      <a href="subtracao-simples.html" class="game-card">
+        <div class="game-image" style="background-color: #118AB2; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+          ➖
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Subtração Simples</h3>
+          <p class="game-description">Aprenda subtração com situações do dia a dia e objetos visuais.</p>
+          <span class="game-difficulty medium">Médio</span>
+        </div>
+      </a>
+      
+      <!-- Jogo 4: Formas Geométricas -->
+      <a href="formas-geometricas.html" class="game-card">
+        <div class="game-image" style="background-color: #EF476F; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+          🔺
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Formas Geométricas</h3>
+          <p class="game-description">Identifique e combine formas geométricas em um jogo de memória.</p>
+          <span class="game-difficulty easy">Fácil</span>
+        </div>
+      </a>
+      
+      <!-- Jogo 5: Padrões e Sequências -->
+      <a href="padroes-sequencias.html" class="game-card">
+        <div class="game-image" style="background-color: #9B5DE5; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+          🔄
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Padrões e Sequências</h3>
+          <p class="game-description">Complete os padrões com cores, formas e números na ordem correta.</p>
+          <span class="game-difficulty medium">Médio</span>
+        </div>
+      </a>
+      
+      <!-- Jogo 6: Comparação de Quantidades -->
+      <a href="comparacao-quantidades.html" class="game-card">
+        <div class="game-image" style="background-color: #F15BB5; display: flex; justify-content: center; align-items: center; font-size: 4rem;">
+          ⚖️
+        </div>
+        <div class="game-info">
+          <h3 class="game-title">Comparação de Quantidades</h3>
+          <p class="game-description">Descubra qual grupo tem mais, menos ou a mesma quantidade de itens.</p>
+          <span class="game-difficulty easy">Fácil</span>
+        </div>
+      </a>
+    </div>
+  </main>
+  
+  <aside class="direita">
+    <div class="user-info">
+      <h3 style="color: var(--white); text-align: center; margin-bottom: 1rem;">Seus Jogos Favoritos</h3>
+      <div style="background-color: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px;">
+        <p style="color: var(--white); text-align: center; font-style: italic;">Você ainda não tem jogos favoritos.</p>
+        <p style="color: var(--fun-yellow); text-align: center; font-size: 0.9rem; margin-top: 0.5rem;">Jogue e marque como favorito!</p>
+      </div>
+    </div>
+    
+    <div class="motivacional" style="margin-top: 2rem;">
+      <p>Dica do Dia</p>
+      <p style="font-size: 0.9rem;">Conte objetos ao seu redor para praticar matemática no dia a dia!</p>
+    </div>
+  </aside>
+</div>
+
+</body>
+</html>
