@@ -43,7 +43,7 @@
       min-height: 100vh;
     }
 
-    /* Barra lateral esquerda */
+    /* Barra lateral esquerda - IDÊNTICA AO JOGO ORIGINAL */
     .esquerda {
       width: 15%;
       min-width: 180px;
@@ -72,6 +72,127 @@
       background-color: var(--accent-blue);
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .user-info {
+      margin-top: 1.5rem;
+      background-color: rgba(255,255,255,0.2);
+      padding: 1rem;
+      border-radius: 15px;
+      width: 90%;
+      text-align: center;
+      border: 2px dashed white;
+    }
+
+    .user-avatar {
+      width: 70px;
+      height: 70px;
+      background-color: var(--fun-yellow);
+      color: var(--fun-purple);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      font-weight: bold;
+      font-size: 1.5rem;
+      border: 3px solid white;
+    }
+
+    .user-name {
+      font-weight: 700;
+      margin-top: 0.5rem;
+      color: var(--white);
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .user-level {
+      font-size: 0.9rem;
+      color: var(--white);
+      text-align: center;
+      margin-top: 0.3rem;
+      background-color: var(--fun-red);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .menu-navegacao {
+      margin: 2rem 0;
+      width: 100%;
+    }
+
+    .menu-navegacao ul {
+      list-style-type: none;
+    }
+
+    .menu-navegacao li {
+      margin-bottom: 0.8rem;
+      padding: 0 1rem;
+    }
+
+    .menu-navegacao a {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      color: var(--white);
+      text-decoration: none;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+      background-color: rgba(255,255,255,0.1);
+      border-left: 4px solid transparent;
+    }
+
+    .menu-navegacao a span {
+      margin-right: 10px;
+      font-size: 1.3rem;
+    }
+
+    .menu-navegacao a:hover {
+      background-color: rgba(255,255,255,0.3);
+      color: var(--white);
+      border-left: 4px solid var(--fun-yellow);
+      transform: translateX(5px);
+    }
+
+    .motivacional {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.95rem;
+      text-align: center;
+      color: var(--white);
+      font-style: italic;
+      border-top: 2px dotted var(--fun-yellow);
+      width: 100%;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 0 0 0 15px;
+    }
+
+    .motivacional p:first-child {
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+      color: var(--fun-yellow);
+    }
+
+    .motivacional p:last-child {
+      font-size: 0.8rem;
+    }
+
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
     }
 
     /* Conteúdo principal do jogo */
@@ -297,23 +418,6 @@
       .drawn-number {
         font-size: 2.5rem;
       }
-    }
-
-    /* Elementos decorativos */
-    .esquerda::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 15px;
-      background: repeating-linear-gradient(
-        45deg,
-        var(--fun-yellow),
-        var(--fun-yellow) 10px,
-        var(--fun-green) 10px,
-        var(--fun-green) 20px
-      );
     }
   </style>
 </head>
