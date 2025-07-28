@@ -603,6 +603,27 @@
       background-color: #ffeb3b;
       border-radius: 50%;
     }
+    /* Confetti animation */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background-color: #f00;
+  opacity: 0;
+  z-index: 9999;
+  animation: confetti-fall 4s ease-in forwards;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
   </style>
 </head>
 <body>
@@ -782,8 +803,8 @@
     }, 300);
   }
   
-  // Verificar resposta
-  function checkAnswer() {
+ // Verificar resposta
+function checkAnswer() {
     if (!gameActive) return;
 
     const userAnswer = parseInt(sumInput.value);
@@ -812,15 +833,15 @@
         if (characters[currentPlayer].position >= totalHouses) {
             gameActive = false;
             const winnerIndex = currentPlayer; // Armazena o índice do vencedor ANTES de alternar
+            createConfetti(); // Adiciona confetes
             setTimeout(() => {
                 feedback.textContent = `${characters[winnerIndex].name} venceu! 🏆`; // Usa o índice armazenado
                 showRestartButton();
             }, 1000);
         }
 
-        // Alternar jogador SOMENTE SE o jogo ainda estiver ativo (ninguém venceu)
-        // ou se o jogo não estiver mais ativo (o jogador atual venceu e o turno não precisa ser resetado para o próximo)
-        if (gameActive) { // Adiciona esta condição para alternar apenas se o jogo não terminou
+        // Alternar jogador SOMENTE SE o jogo ainda estiver ativo
+        if (gameActive) {
              currentPlayer = (currentPlayer + 1) % characters.length;
         }
 
@@ -830,12 +851,51 @@
         feedback.className = "feedback wrong-feedback";
     }
 
-    // Resetar para próxima jogada (se o jogo ainda estiver ativo ou se o jogo não terminou com vitória)
-    // Se o jogo terminou, não queremos resetar o turno imediatamente para mostrar a mensagem de vitória.
+    // Resetar para próxima jogada
     if (gameActive || (userAnswer !== correctAnswer)) {
         setTimeout(() => {
             resetTurn();
         }, 1500);
+    }
+}
+
+// Função para criar confetes
+function createConfetti() {
+    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff8c00'];
+    const confettiCount = 100;
+    
+    for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Posição aleatória na horizontal
+        const left = Math.random() * 100;
+        confetti.style.left = `${left}vw`;
+        
+        // Atraso aleatório para começar a animação
+        const delay = Math.random() * 2;
+        confetti.style.animationDelay = `${delay}s`;
+        
+        // Cor aleatória
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.backgroundColor = color;
+        
+        // Tamanho aleatório
+        const size = Math.random() * 10 + 5;
+        confetti.style.width = `${size}px`;
+        confetti.style.height = `${size}px`;
+        
+        // Forma aleatória (redonda ou quadrada)
+        if (Math.random() > 0.5) {
+            confetti.style.borderRadius = '50%';
+        }
+        
+        document.body.appendChild(confetti);
+        
+        // Remover confete após a animação
+        setTimeout(() => {
+            confetti.remove();
+        }, 4000 + delay * 1000);
     }
 }
   

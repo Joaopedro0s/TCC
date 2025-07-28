@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bingo Matemático</title>
+  <style>
+    :root {
+      --primary-dark: #2c3e50;
+      --primary-blue: #3498db;
+      --accent-blue: #2980b9;
+      --accent-orange: #e67e22;
+      --light-gray: #f9f9f9;
+      --medium-gray: #ecf0f1;
+      --dark-gray: #7f8c8d;
+      --white: #ffffff;
+      --math-symbol: #f1c40f;
+      --fun-green: #2ecc71;
+      --fun-purple: #9b59b6;
+      --fun-red: #e74c3c;
+      --fun-yellow: #f39c12;
+      --forest-green: #27ae60;
+      --path-brown: #8b4513;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Comic Sans MS', 'Comic Neue', cursive;
+      color: var(--dark-gray);
+      background-color: #e8f5e9;
+      line-height: 1.6;
+    }
+
+    /* Layout principal */
+    .game-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Barra lateral esquerda */
+    .esquerda {
+      width: 15%;
+      min-width: 180px;
+      background-color: var(--forest-green);
+      border-right: 3px dashed var(--fun-yellow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2rem;
+      position: fixed;
+      height: 100vh;
+      z-index: 100;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+    }
+
+    #palavra {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--fun-yellow);
+      letter-spacing: -1px;
+      padding: 0.5rem 1rem;
+      border-bottom: 4px dotted var(--fun-green);
+      transform: rotate(-3deg);
+      text-align: center;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+      background-color: var(--accent-blue);
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Conteúdo principal do jogo */
+    .game-content {
+      flex: 1;
+      padding: 2rem 3rem;
+      margin-left: 15%;
+      width: 70%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Container do jogo */
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      border: 3px solid var(--fun-yellow);
+      position: relative;
+      overflow: hidden;
+      background-color: #e8f5e9;
+    }
+
+    #game-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+
+    /* Cartela de Bingo */
+    .bingo-card {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 2rem auto;
+      max-width: 500px;
+    }
+
+    .bingo-number {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--white);
+      border: 3px solid var(--fun-yellow);
+      border-radius: 10px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary-blue);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bingo-number:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .bingo-number.marked {
+      background-color: var(--fun-green);
+      color: white;
+      border-color: var(--forest-green);
+    }
+
+    .bingo-number.marked::after {
+      content: "✓";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* Número sorteado */
+    .drawn-number {
+      font-size: 4rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 1rem 0;
+      color: var(--fun-red);
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .drawn-number span {
+      display: inline-block;
+      animation: pulse 0.5s;
+    }
+
+    /* Botões */
+    .game-btn {
+      padding: 0.8rem 1.5rem;
+      font-size: 1.2rem;
+      background-color: var(--fun-purple);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: 'Comic Sans MS', cursive;
+      transition: all 0.3s;
+      margin: 0.5rem;
+      font-weight: bold;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    }
+
+    .game-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+    }
+
+    .game-btn:disabled {
+      background-color: var(--dark-gray);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .start-btn {
+      background-color: var(--fun-green);
+    }
+
+    .draw-btn {
+      background-color: var(--accent-blue);
+    }
+
+    /* Mensagens */
+    .feedback {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-align: center;
+      margin: 1rem 0;
+      min-height: 40px;
+    }
+
+    .win-feedback {
+      color: var(--fun-green);
+      animation: bounce 0.5s ease;
+    }
+
+    /* Confetti */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: #f00;
+      opacity: 0;
+      z-index: 9999;
+      animation: confetti-fall 4s ease-in forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    /* Responsividade */
+    @media (max-width: 1024px) {
+      .game-layout {
+        flex-direction: column;
+      }
+      
+      .esquerda {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 3px dashed var(--fun-yellow);
+      }
+      
+      .game-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      #game-container {
+        padding: 1.5rem;
+      }
+      
+      .bingo-number {
+        font-size: 1.2rem;
+      }
+      
+      .drawn-number {
+        font-size: 2.5rem;
+      }
+    }
+
+    /* Elementos decorativos */
+    .esquerda::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 15px;
+      background: repeating-linear-gradient(
+        45deg,
+        var(--fun-yellow),
+        var(--fun-yellow) 10px,
+        var(--fun-green) 10px,
+        var(--fun-green) 20px
+      );
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-layout">
+  <aside class="esquerda">
+    <div id="palavra">Bingo!</div>
+    
+    <div class="user-info">
+      <div class="user-avatar">J</div>
+      <div class="user-name">Jogador</div>
+      <div class="user-level">Nível: 1º Ano</div>
+    </div>
+    
+    <nav class="menu-navegacao">
+      <ul>
+        <li><a href="../index.html"><span>🏠</span> Início</a></li>
+        <li><a href="#"><span>📊</span> Progresso</a></li>
+        <li><a href="#"><span>🏆</span> Conquistas</a></li>
+      </ul>
+    </nav>
+    
+    <div class="motivacional">
+      <p>Você é incrível!</p>
+      <p>Vamos aprender brincando!</p>
+    </div>
+  </aside>
+  
+  <main class="game-content">
+    <div id="game-container">
+      <h1 style="text-align: center; color: var(--forest-green); margin-bottom: 1rem;">Bingo Matemático</h1>
+      <p style="text-align: center; margin-bottom: 1.5rem; color: var(--primary-blue);">Resolva as continhas e marque os resultados na sua cartela!</p>
+      
+      <!-- Número sorteado -->
+      <div class="drawn-number" id="drawn-number">
+        <span>?</span>
+      </div>
+      
+      <!-- Cartela de Bingo -->
+      <div class="bingo-card" id="bingo-card">
+        <!-- Os números serão gerados pelo JavaScript -->
+      </div>
+      
+      <!-- Controles do jogo -->
+      <div style="text-align: center; margin-top: 2rem;">
+        <button class="game-btn start-btn" id="start-btn">Começar Jogo</button>
+        <button class="game-btn draw-btn" id="draw-btn" disabled>Sortear Número</button>
+      </div>
+      
+      <!-- Mensagem de feedback -->
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Configuração do jogo
+  const cardSize = 5; // Cartela 5x5
+  const maxNumber = 20; // Números até 20 para o 1º ano
+  let bingoCard = [];
+  let drawnNumbers = [];
+  let gameActive = false;
+  
+  // Elementos do DOM
+  const bingoCardEl = document.getElementById('bingo-card');
+  const drawnNumberEl = document.getElementById('drawn-number');
+  const startBtn = document.getElementById('start-btn');
+  const drawBtn = document.getElementById('draw-btn');
+  const feedbackEl = document.getElementById('feedback');
+  
+  // Operações matemáticas simples
+  const operations = [
+    { symbol: '+', func: (a, b) => a + b },
+    { symbol: '-', func: (a, b) => a - b }
+  ];
+  
+  // Inicialização do jogo
+  function initGame() {
+    // Event listeners
+    startBtn.addEventListener('click', startGame);
+    drawBtn.addEventListener('click', drawNumber);
+    
+    // Criar cartela vazia
+    createEmptyCard();
+  }
+  
+  // Criar cartela vazia
+  function createEmptyCard() {
+    bingoCardEl.innerHTML = '';
+    for (let i = 0; i < cardSize * cardSize; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'bingo-number';
+      cell.textContent = '?';
+      cell.addEventListener('click', () => markNumber(i));
+      bingoCardEl.appendChild(cell);
+    }
+  }
+  
+  // Começar novo jogo
+  function startGame() {
+    // Resetar variáveis
+    bingoCard = [];
+    drawnNumbers = [];
+    gameActive = true;
+    
+    // Gerar cartela com operações matemáticas
+    generateMathCard();
+    
+    // Atualizar UI
+    drawnNumberEl.innerHTML = '<span>?</span>';
+    feedbackEl.textContent = '';
+    feedbackEl.className = 'feedback';
+    startBtn.disabled = true;
+    drawBtn.disabled = false;
+  }
+  
+  // Gerar cartela com operações matemáticas
+  function generateMathCard() {
+    bingoCardEl.innerHTML = '';
+    bingoCard = [];
+    
+    // Gerar 25 operações únicas
+    const usedOperations = new Set();
+    
+    while (bingoCard.length < cardSize * cardSize) {
+      const num1 = Math.floor(Math.random() * 10) + 1; // 1-10
+      const num2 = Math.floor(Math.random() * 10) + 1; // 1-10
+      const op = operations[Math.floor(Math.random() * operations.length)];
+      
+      // Garantir que o resultado seja positivo e ≤ 20
+      const result = op.func(num1, num2);
+      if (result > 0 && result <= maxNumber) {
+        const operationStr = `${num1} ${op.symbol} ${num2}`;
+        const operationKey = `${num1}${op.symbol}${num2}`;
+        
+        // Evitar operações repetidas
+        if (!usedOperations.has(operationKey)) {
+          usedOperations.add(operationKey);
+          bingoCard.push({
+            operation: operationStr,
+            result: result,
+            marked: false
+          });
+        }
+      }
+    }
+    
+    // Preencher a cartela visual
+    bingoCard.forEach((item, index) => {
+      const cell = document.createElement('div');
+      cell.className = 'bingo-number';
+      cell.textContent = item.operation;
+      cell.dataset.result = item.result;
+      cell.addEventListener('click', () => markNumber(index));
+      bingoCardEl.appendChild(cell);
+    });
+  }
+  
+  // Sortear número
+  function drawNumber() {
+    if (!gameActive || drawnNumbers.length >= maxNumber) return;
+    
+    // Sortear um número que ainda não foi sorteado (1-20)
+    let number;
+    do {
+      number = Math.floor(Math.random() * maxNumber) + 1;
+    } while (drawnNumbers.includes(number));
+    
+    drawnNumbers.push(number);
+    
+    // Atualizar display
+    drawnNumberEl.innerHTML = `<span>${number}</span>`;
+    
+    // Verificar se o número está na cartela
+    checkCardForNumber(number);
+    
+    // Verificar se todos os números foram sorteados
+    if (drawnNumbers.length >= maxNumber) {
+      endGame(false); // Jogo terminou sem vencedor
+    }
+  }
+  
+  // Marcar número na cartela
+  function markNumber(index) {
+    if (!gameActive || bingoCard[index].marked) return;
+    
+    const cell = bingoCardEl.children[index];
+    const result = parseInt(cell.dataset.result);
+    
+    // Verificar se o número marcado é o último sorteado
+    if (drawnNumbers.length > 0 && result === drawnNumbers[drawnNumbers.length - 1]) {
+      bingoCard[index].marked = true;
+      cell.classList.add('marked');
+      cell.textContent = result;
+      
+      // Verificar se completou linha, coluna ou diagonal
+      checkForBingo();
+    } else {
+      feedbackEl.textContent = "Esse não é o número sorteado!";
+      feedbackEl.className = "feedback wrong-feedback";
+      setTimeout(() => {
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'feedback';
+      }, 1500);
+    }
+  }
+  
+  // Verificar cartela por número sorteado
+  function checkCardForNumber(number) {
+    let found = false;
+    bingoCard.forEach((item, index) => {
+      if (item.result === number) {
+        const cell = bingoCardEl.children[index];
+        cell.style.backgroundColor = '#FFEB3B';
+        cell.style.color = 'black';
+        setTimeout(() => {
+          if (!item.marked) {
+            cell.style.backgroundColor = '';
+            cell.style.color = '';
+          }
+        }, 1000);
+        found = true;
+      }
+    });
+    
+    if (!found) {
+      feedbackEl.textContent = "Esse número não está na sua cartela!";
+      feedbackEl.className = "feedback wrong-feedback";
+      setTimeout(() => {
+        feedbackEl.textContent = '';
+        feedbackEl.className = 'feedback';
+      }, 1500);
+    }
+  }
+  
+  // Verificar por Bingo
+  function checkForBingo() {
+    // Verificar linhas
+    for (let row = 0; row < cardSize; row++) {
+      let markedCount = 0;
+      for (let col = 0; col < cardSize; col++) {
+        const index = row * cardSize + col;
+        if (bingoCard[index].marked) markedCount++;
+      }
+      if (markedCount === cardSize) {
+        endGame(true);
+        return;
+      }
+    }
+    
+    // Verificar colunas
+    for (let col = 0; col < cardSize; col++) {
+      let markedCount = 0;
+      for (let row = 0; row < cardSize; row++) {
+        const index = row * cardSize + col;
+        if (bingoCard[index].marked) markedCount++;
+      }
+      if (markedCount === cardSize) {
+        endGame(true);
+        return;
+      }
+    }
+    
+    // Verificar diagonal principal
+    let markedCount = 0;
+    for (let i = 0; i < cardSize; i++) {
+      const index = i * cardSize + i;
+      if (bingoCard[index].marked) markedCount++;
+    }
+    if (markedCount === cardSize) {
+      endGame(true);
+      return;
+    }
+    
+    // Verificar diagonal secundária
+    markedCount = 0;
+    for (let i = 0; i < cardSize; i++) {
+      const index = i * cardSize + (cardSize - 1 - i);
+      if (bingoCard[index].marked) markedCount++;
+    }
+    if (markedCount === cardSize) {
+      endGame(true);
+      return;
+    }
+  }
+  
+  // Finalizar jogo
+  function endGame(hasWinner) {
+    gameActive = false;
+    drawBtn.disabled = true;
+    startBtn.disabled = false;
+    
+    if (hasWinner) {
+      feedbackEl.textContent = "BINGO! Você ganhou! 🎉";
+      feedbackEl.className = "feedback win-feedback";
+      createConfetti();
+    } else {
+      feedbackEl.textContent = "Fim de jogo! Tente novamente!";
+      feedbackEl.className = "feedback";
+    }
+  }
+  
+  // Criar efeito de confete
+  function createConfetti() {
+    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff', '#ff8c00'];
+    const confettiCount = 100;
+    
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      
+      // Posição aleatória na horizontal
+      const left = Math.random() * 100;
+      confetti.style.left = `${left}vw`;
+      
+      // Atraso aleatório para começar a animação
+      const delay = Math.random() * 2;
+      confetti.style.animationDelay = `${delay}s`;
+      
+      // Cor aleatória
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.backgroundColor = color;
+      
+      // Tamanho aleatório
+      const size = Math.random() * 10 + 5;
+      confetti.style.width = `${size}px`;
+      confetti.style.height = `${size}px`;
+      
+      // Forma aleatória (redonda ou quadrada)
+      if (Math.random() > 0.5) {
+        confetti.style.borderRadius = '50%';
+      }
+      
+      document.body.appendChild(confetti);
+      
+      // Remover confete após a animação
+      setTimeout(() => {
+        confetti.remove();
+      }, 4000 + delay * 1000);
+    }
+  }
+  
+  // Iniciar o jogo quando a página carregar
+  window.addEventListener('DOMContentLoaded', initGame);
+</script>
+
+</body>
+</html>
