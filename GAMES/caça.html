@@ -14,250 +14,97 @@
   --medium-gray: #ecf0f1;
   --dark-gray: #7f8c8d;
   --white: #ffffff;
-  --math-symbol: #f1c40f;
   --fun-green: #2ecc71;
   --fun-purple: #9b59b6;
   --fun-red: #e74c3c;
   --fun-yellow: #f39c12;
+  --forest-green: #27ae60;
   --sky-blue: #87ceeb;
 }
 
-/* Reset básico */
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
 html, body {
-  height: 100%;
-  font-family: 'Comic Sans MS', 'Comic Neue', cursive;
-  color: var(--dark-gray);
+  height:100%;
+  font-family: 'Comic Sans MS', cursive;
   background-color: var(--sky-blue);
-  overflow: hidden;
+  color: var(--dark-gray);
 }
 
-/* Layout principal */
-.game-layout {
-  display: flex;
-  min-height: 100vh;
-}
+.game-layout { display:flex; min-height:100vh; }
 
-/* Barra lateral esquerda */
 .esquerda {
-  width: 15%;
-  min-width: 180px;
-  background-color: var(--fun-green);
-  border-right: 3px dashed var(--fun-yellow);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 2rem;
-  position: fixed;
-  height: 100vh;
-  z-index: 100;
-  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  width:15%;
+  min-width:180px;
+  background-color: var(--forest-green);
+  border-right:3px dashed var(--fun-yellow);
+  display:flex; flex-direction:column; align-items:center;
+  padding-top:2rem; position:fixed; height:100vh; z-index:100;
 }
 
 #palavra {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--fun-yellow);
-  letter-spacing: -1px;
-  padding: 0.5rem 1rem;
-  border-bottom: 4px dotted var(--fun-green);
-  transform: rotate(-3deg);
-  text-align: center;
-  text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-  background-color: var(--accent-blue);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-size:2rem; font-weight:700; color: var(--fun-yellow);
+  letter-spacing:-1px; padding:0.5rem 1rem; border-bottom:4px dotted var(--fun-green);
+  text-align:center; background-color: var(--accent-blue); border-radius:10px;
+  text-shadow:2px 2px 0px rgba(0,0,0,0.1);
 }
 
 .user-info {
-  margin-top: 1.5rem;
-  background-color: rgba(255,255,255,0.2);
-  padding: 1rem;
-  border-radius: 15px;
-  width: 90%;
-  text-align: center;
-  border: 2px dashed white;
+  margin-top:1.5rem; background-color: rgba(255,255,255,0.2);
+  padding:1rem; border-radius:15px; width:90%; text-align:center; border:2px dashed white;
 }
 
 .user-avatar {
-  width: 70px;
-  height: 70px;
-  background-color: var(--fun-yellow);
-  color: var(--fun-purple);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  font-weight: bold;
-  font-size: 1.5rem;
-  border: 3px solid white;
+  width:70px; height:70px; background-color: var(--fun-yellow);
+  color: var(--fun-purple); border-radius:50%; display:flex;
+  align-items:center; justify-content:center; margin:0 auto; font-weight:bold; font-size:1.5rem;
+  border:3px solid white;
 }
 
-.user-name {
-  font-weight: 700;
-  margin-top: 0.5rem;
-  color: var(--white);
-  text-align: center;
-  font-size: 1.2rem;
-}
+.user-name { font-weight:700; margin-top:0.5rem; color:white; font-size:1.2rem; text-align:center; }
+.user-level { font-size:0.9rem; color:white; text-align:center; margin-top:0.3rem; background-color: var(--fun-red); padding:0.2rem 0.5rem; border-radius:10px; display:inline-block; }
 
-.user-level {
-  font-size: 0.9rem;
-  color: var(--white);
-  text-align: center;
-  margin-top: 0.3rem;
-  background-color: var(--fun-red);
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  display: inline-block;
-}
+.menu-navegacao { margin:2rem 0; width:100%; }
+.menu-navegacao ul { list-style-type:none; }
+.menu-navegacao li { margin-bottom:0.8rem; padding:0 1rem; }
+.menu-navegacao a { display:flex; align-items:center; padding:0.8rem 1rem; color:white; text-decoration:none; border-radius:10px; transition: all 0.2s ease; background-color: rgba(255,255,255,0.1); border-left:4px solid transparent; }
+.menu-navegacao a span { margin-right:10px; font-size:1.3rem; }
+.menu-navegacao a:hover { background-color: rgba(255,255,255,0.3); color:white; border-left:4px solid var(--fun-yellow); transform:translateX(5px); }
 
-.menu-navegacao {
-  margin: 2rem 0;
-  width: 100%;
-}
+.motivacional { margin-top:auto; padding:1rem; font-size:0.95rem; text-align:center; color:white; font-style:italic; border-top:2px dotted var(--fun-yellow); width:100%; background-color:rgba(0,0,0,0.1); border-radius:0 0 0 15px; }
+.motivacional p:first-child { font-weight:700; margin-bottom:0.3rem; color: var(--fun-yellow); }
+.motivacional p:last-child { font-size:0.8rem; }
 
-.menu-navegacao ul { list-style-type: none; }
-.menu-navegacao li { margin-bottom: 0.8rem; padding: 0 1rem; }
-.menu-navegacao a {
-  display: flex;
-  align-items: center;
-  padding: 0.8rem 1rem;
-  color: var(--white);
-  text-decoration: none;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-  background-color: rgba(255,255,255,0.1);
-  border-left: 4px solid transparent;
-}
-.menu-navegacao a span { margin-right: 10px; font-size: 1.3rem; }
-.menu-navegacao a:hover {
-  background-color: rgba(255,255,255,0.3);
-  color: var(--white);
-  border-left: 4px solid var(--fun-yellow);
-  transform: translateX(5px);
-}
+.game-content { flex:1; padding:2rem 3rem; margin-left:15%; width:70%; display:flex; flex-direction:column; align-items:center; }
 
-.motivacional {
-  margin-top: auto;
-  padding: 1rem;
-  font-size: 0.95rem;
-  text-align: center;
-  color: var(--white);
-  font-style: italic;
-  border-top: 2px dotted var(--fun-yellow);
-  width: 100%;
-  background-color: rgba(0,0,0,0.1);
-  border-radius: 0 0 0 15px;
-}
-
-.motivacional p:first-child { font-weight: 700; margin-bottom: 0.3rem; color: var(--fun-yellow); }
-.motivacional p:last-child { font-size: 0.8rem; }
-
-/* Conteúdo principal do jogo */
-.game-content {
-  flex: 1;
-  padding: 2rem 3rem;
-  margin-left: 15%;
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-/* Container do jogo */
 #game-container {
-  width: 100%;
-  max-width: 800px;
-  background: var(--white);
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-  border: 3px solid var(--fun-yellow);
-  position: relative;
-  overflow: hidden;
-  background-color: #e0f7fa;
+  width:100%; max-width:800px; background: var(--white); padding:2rem; border-radius:15px;
+  box-shadow:0 8px 15px rgba(0,0,0,0.1); border:3px solid var(--fun-yellow); position:relative; overflow:hidden; background-color:#e8f5e9;
 }
 
-h1 { text-align: center; color: var(--fun-green); margin-bottom: 1rem; }
-p { text-align: center; margin-bottom: 1.5rem; color: var(--primary-blue); }
+h1 { text-align:center; color: var(--forest-green); margin-bottom:1rem; }
+p.description { text-align:center; margin-bottom:1.5rem; color: var(--primary-blue); font-size:1.1rem; }
 
-/* Bolhas de números (nuvens) */
+.start-btn {
+  padding:0.8rem 1.5rem; font-size:1.2rem; background-color: var(--fun-green);
+  color:white; border:none; border-radius:10px; cursor:pointer; font-family: 'Comic Sans MS', cursive;
+  transition: all 0.3s; margin:0.5rem; font-weight:bold; box-shadow:0 4px 0 rgba(0,0,0,0.1);
+}
+.start-btn:hover { transform:translateY(-2px); box-shadow:0 6px 0 rgba(0,0,0,0.1); }
+
 .number-cloud {
-  position: absolute;
-  top: -60px;
-  width: 60px;
-  height: 60px;
-  background-color: var(--fun-yellow);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 1.5rem;
-  cursor: pointer;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  position:absolute;
+  padding:1rem 1.2rem;
+  background-color:var(--fun-yellow);
+  border-radius:15px;
+  font-size:1.2rem;
+  font-weight:bold;
+  cursor:pointer;
+  user-select:none;
+  box-shadow:0 4px 5px rgba(0,0,0,0.2);
   transition: transform 0.2s;
 }
-.number-cloud:hover { transform: scale(1.2); }
-
-/* Feedback */
-.feedback {
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 1rem;
-  min-height: 40px;
-}
-
-/* Botões */
-.game-btn {
-  padding: 0.8rem 1.5rem;
-  font-size: 1.2rem;
-  background-color: var(--fun-purple);
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-family: 'Comic Sans MS', cursive;
-  transition: all 0.3s;
-  margin: 0.5rem;
-  font-weight: bold;
-  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
-}
-.game-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 rgba(0,0,0,0.1); }
-.game-btn:disabled { background-color: var(--dark-gray); cursor: not-allowed; transform: none; box-shadow: none; }
-.start-btn { background-color: var(--fun-green); }
-
-/* Confetti */
-.confetti {
-  position: fixed;
-  width: 10px;
-  height: 10px;
-  background-color: #f00;
-  opacity: 0;
-  z-index: 9999;
-  animation: confetti-fall 4s ease-in forwards;
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-}
-
-/* Responsividade */
-@media (max-width: 1024px) {
-  .game-layout { flex-direction: column; }
-  .esquerda { position: relative; width: 100%; height: auto; padding: 1rem; border-right: none; border-bottom: 3px dashed var(--fun-yellow); }
-  .game-content { margin-left: 0; width: 100%; padding: 1.5rem; }
-}
-
-@media (max-width: 768px) {
-  .number-cloud { width: 50px; height: 50px; font-size: 1.2rem; }
-}
+.number-cloud:hover { transform:scale(1.1); }
 </style>
 </head>
 <body>
@@ -265,38 +112,23 @@ p { text-align: center; margin-bottom: 1.5rem; color: var(--primary-blue); }
 <div class="game-layout">
   <aside class="esquerda">
     <div id="palavra">Caça Números!</div>
-    
     <div class="user-info">
       <div class="user-avatar">J</div>
       <div class="user-name">Jogador</div>
       <div class="user-level">Nível: 1º Ano</div>
-    </div>
-    
-    <nav class="menu-navegacao">
-      <ul>
-        <li><a href="#"><span>🏠</span> Início</a></li>
-        <li><a href="#"><span>📊</span> Progresso</a></li>
-        <li><a href="#"><span>🏆</span> Conquistas</a></li>
-      </ul>
-    </nav>
-    
-    <div class="motivacional">
-      <p>Você é incrível!</p>
-      <p>Vamos aprender brincando!</p>
     </div>
   </aside>
   
   <main class="game-content">
     <div id="game-container">
       <h1>Caça Números no Céu</h1>
-      <p>Clique nos números que resolvem a continha abaixo!</p>
-      <div style="text-align:center; font-size:2rem; margin-bottom:1rem;">Resolva: <span id="current-question">?</span></div>
+      <p class="description">Clique no número correto que cai do céu!</p>
       
-      <div style="text-align:center;">
-        <button class="game-btn start-btn" id="start-btn">Começar Jogo</button>
+      <div id="current-question" style="font-size:2rem; font-weight:bold; text-align:center; margin:1rem 0;">?</div>
+      
+      <div style="text-align:center; margin-top:2rem;">
+        <button class="start-btn" id="start-btn">Começar Jogo</button>
       </div>
-      
-      <div class="feedback" id="feedback"></div>
     </div>
   </main>
 </div>
@@ -305,36 +137,28 @@ p { text-align: center; margin-bottom: 1.5rem; color: var(--primary-blue); }
 const gameContainer = document.getElementById('game-container');
 const startBtn = document.getElementById('start-btn');
 const currentQuestionEl = document.getElementById('current-question');
-const feedbackEl = document.getElementById('feedback');
 
 let gameActive = false;
 let correctAnswer = 0;
 let clouds = [];
 const maxNumber = 20;
-
-// Operações simples
 const operations = [
   { symbol: '+', func: (a,b)=>a+b },
   { symbol: '-', func: (a,b)=>a-b }
 ];
 
-// Função para criar uma nuvem
-function createCloud(number) {
+function createCloud(number, leftPos) {
   const cloud = document.createElement('div');
   cloud.className = 'number-cloud';
   cloud.textContent = number;
-  cloud.style.left = Math.random() * (gameContainer.offsetWidth - 60) + 'px';
+  cloud.style.left = leftPos + 'px';
   cloud.style.top = '-60px';
   
   cloud.addEventListener('click', ()=>{
     if (!gameActive) return;
     if (number === correctAnswer) {
-      feedbackEl.textContent = "Acertou! 🎉";
       cloud.remove();
-      setTimeout(nextQuestion, 1000);
-    } else {
-      feedbackEl.textContent = "Ops, tente outro número!";
-      setTimeout(()=>{ feedbackEl.textContent=''; }, 1500);
+      nextQuestion();
     }
   });
   
@@ -342,21 +166,29 @@ function createCloud(number) {
   clouds.push(cloud);
 }
 
-// Função para criar várias nuvens
 function spawnClouds() {
+  clouds.forEach(c=>c.remove());
+  clouds = [];
+  
+  const positions = [];
+  while (positions.length < 6) {
+    const pos = Math.random() * (gameContainer.offsetWidth - 60);
+    if (!positions.some(p => Math.abs(p-pos)<70)) {
+      positions.push(pos);
+    }
+  }
+
   const nums = [];
   while (nums.length < 6) {
     const num = Math.floor(Math.random()*maxNumber)+1;
     if (!nums.includes(num)) nums.push(num);
   }
-  // Colocar a resposta correta entre os números
   const correctPos = Math.floor(Math.random()*nums.length);
   nums[correctPos] = correctAnswer;
-  
-  nums.forEach(n => createCloud(n));
+
+  nums.forEach((n,i)=>createCloud(n, positions[i]));
 }
 
-// Animar nuvens
 function animateClouds() {
   clouds.forEach(cloud=>{
     const top = parseFloat(cloud.style.top);
@@ -369,10 +201,7 @@ function animateClouds() {
   if (gameActive) requestAnimationFrame(animateClouds);
 }
 
-// Próxima pergunta
 function nextQuestion() {
-  clouds.forEach(c=>c.remove());
-  clouds = [];
   const num1 = Math.floor(Math.random()*10)+1;
   const num2 = Math.floor(Math.random()*10)+1;
   const op = operations[Math.floor(Math.random()*operations.length)];
@@ -381,12 +210,40 @@ function nextQuestion() {
   spawnClouds();
 }
 
-// Iniciar jogo
+function startCountdown(callback) {
+  const countdown = document.createElement('div');
+  countdown.style.position = 'absolute';
+  countdown.style.top = '50%';
+  countdown.style.left = '50%';
+  countdown.style.transform = 'translate(-50%, -50%)';
+  countdown.style.fontSize = '5rem';
+  countdown.style.color = '#e67e22';
+  countdown.style.fontWeight = 'bold';
+  countdown.style.textShadow = '2px 2px #000';
+  gameContainer.appendChild(countdown);
+
+  let count = 3;
+  countdown.textContent = count;
+
+  const interval = setInterval(() => {
+    count--;
+    if (count > 0) {
+      countdown.textContent = count;
+    } else {
+      clearInterval(interval);
+      countdown.remove();
+      callback();
+    }
+  }, 1000);
+}
+
 startBtn.addEventListener('click', ()=>{
-  gameActive = true;
-  startBtn.disabled = true;
-  nextQuestion();
-  animateClouds();
+  startBtn.style.display = 'none';
+  startCountdown(() => {
+    gameActive = true;
+    nextQuestion();
+    animateClouds();
+  });
 });
 </script>
 
